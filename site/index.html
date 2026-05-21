@@ -6,7 +6,7 @@
   Positioning: open protocol for machine-readable permissions (agentic web)
   - GitHub: https://github.com/bettabeta/proofmeta-primitive-core
   -         https://github.com/bettabeta/proofmeta-license-contracts
-  - MailerLite: account 2287781 / form 185530176070747374
+  - MailerLite embed: account 2287781 / form 185530176070747374 (universal.js + reCAPTCHA)
 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -275,22 +275,154 @@
   details.obj .body p { margin: 0 0 12px; max-width: none; }
   details.obj .body p:last-child { margin-bottom: 0; }
 
-  .builder-thread {
-    display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: stretch;
+  .builder-thread-embed {
+    margin-top: 18px;
     max-width: 540px;
   }
-  .builder-thread input[type="email"] {
-    flex: 1; min-width: 220px;
-    padding: 14px 16px;
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    color: var(--ink);
-    font-family: var(--mono);
-    font-size: 14px;
+  .builder-thread-embed .hint {
+    width: 100%;
+    font-size: 11px;
+    color: var(--muted);
+    margin: 10px 0 0;
   }
-  .builder-thread input[type="email"]::placeholder { color: var(--muted); }
-  .builder-thread input[type="email"]:focus { outline: none; border-color: var(--amber); }
-  .builder-thread .hint { width: 100%; font-size: 11px; color: var(--muted); margin: 4px 0 0; }
+  .builder-thread-embed .builder-thread-status {
+    width: 100%;
+    font-size: 13px;
+    margin: 10px 0 0;
+  }
+  .builder-thread-embed .builder-thread-status.is-success { color: var(--green); }
+  .builder-thread-embed .builder-thread-status.is-error { color: var(--red); }
+
+  /* MailerLite embed — match site design, hide ML chrome */
+  .builder-thread-embed .ml-form-embedContainer,
+  .builder-thread-embed .ml-form-embedWrapper,
+  .builder-thread-embed .ml-form-embedBody,
+  .builder-thread-embed .ml-form-embedContent,
+  .builder-thread-embed .ml-form-formContent,
+  .builder-thread-embed form {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+  .builder-thread-embed .ml-form-embedHeader,
+  .builder-thread-embed .ml-form-embedTitle,
+  .builder-thread-embed .ml-form-embedSubtitle,
+  .builder-thread-embed .ml-form-embedImage,
+  .builder-thread-embed .ml-form-logo,
+  .builder-thread-embed .ml-form-privacy,
+  .builder-thread-embed .ml-form-checkboxRow.ml-figure,
+  .builder-thread-embed label.ml-form-fieldLabel {
+    display: none !important;
+  }
+  .builder-thread-embed .ml-form-formContent {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .builder-thread-embed .ml-form-fieldRow,
+  .builder-thread-embed .ml-form-fieldRow.ml-button-row {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+  }
+  .builder-thread-embed .ml-form-fieldRow:not(.ml-button-row) {
+    flex: 1 1 220px !important;
+    min-width: 220px !important;
+  }
+  .builder-thread-embed .ml-form-fieldRow.ml-button-row {
+    flex: 0 0 auto !important;
+  }
+  .builder-thread-embed input[type="email"],
+  .builder-thread-embed input[type="text"] {
+    width: 100% !important;
+    padding: 14px 16px !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--hairline) !important;
+    color: var(--ink) !important;
+    font-family: var(--mono) !important;
+    font-size: 14px !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+  }
+  .builder-thread-embed input[type="email"]::placeholder,
+  .builder-thread-embed input[type="text"]::placeholder {
+    color: var(--muted) !important;
+  }
+  .builder-thread-embed input[type="email"]:focus,
+  .builder-thread-embed input[type="text"]:focus {
+    outline: none !important;
+    border-color: var(--amber) !important;
+  }
+  .builder-thread-embed .ml-form-embedSubmit,
+  .builder-thread-embed button.primary,
+  .builder-thread-embed button[type="submit"],
+  .builder-thread-embed .ml-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 14px 20px !important;
+    border: 1px solid var(--ink) !important;
+    color: var(--ink) !important;
+    background: transparent !important;
+    font-family: var(--mono) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    border-radius: 0 !important;
+    cursor: pointer !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+    box-shadow: none !important;
+    transition: transform .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease, border-color .15s ease !important;
+  }
+  .builder-thread-embed .ml-form-embedSubmit:hover,
+  .builder-thread-embed button.primary:hover,
+  .builder-thread-embed button[type="submit"]:hover,
+  .builder-thread-embed .ml-button:hover {
+    background: var(--amber) !important;
+    color: var(--bg) !important;
+    border-color: var(--amber) !important;
+    transform: translate(-1px,-1px) !important;
+    box-shadow: 3px 3px 0 var(--ink) !important;
+  }
+  .builder-thread-embed .ml-form-recaptcha {
+    flex: 1 1 100% !important;
+    margin: 4px 0 0 !important;
+    transform: scale(0.92);
+    transform-origin: left top;
+  }
+  .builder-thread-embed .ml-form-successBody,
+  .builder-thread-embed .ml-form-successContent {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    color: var(--green) !important;
+    font-family: var(--mono) !important;
+    font-size: 13px !important;
+  }
+  .builder-thread-embed .ml-form-successBody p,
+  .builder-thread-embed .ml-form-successContent p {
+    color: var(--green) !important;
+    margin: 0 !important;
+  }
+  .builder-thread-embed.ml-form-loading .ml-form-embedContainer::after {
+    content: 'Loading signup…';
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
 
   .final { padding: 100px 0 88px; }
   .final h2 { max-width: 760px; }
@@ -580,50 +712,58 @@
       <a class="btn ghost" href="https://github.com/bettabeta/proofmeta-license-contracts" target="_blank" rel="noopener">License Contracts →</a>
     </div>
 
-    <iframe name="ml-sink" id="ml-sink" style="display:none" aria-hidden="true" tabindex="-1"></iframe>
-    <form class="builder-thread" id="builder-thread"
-          action="https://assets.mailerlite.com/jsonp/2287781/forms/185530176070747374/subscribe"
-          method="post"
-          target="ml-sink"
-          aria-label="Join the builder thread">
-      <input type="email" name="fields[email]" required placeholder="you@domain.com" aria-label="Email address" autocomplete="email">
-      <button type="submit" class="btn">Join the builder thread →</button>
-      <input type="hidden" name="ml-submit" value="1">
-      <input type="hidden" name="anticsrf" value="true">
+    <div class="builder-thread-embed" id="builder-thread-embed">
+      <div id="mlb2-185530176070747374" class="ml-form-embedContainer ml-form-embedContainer-default ml-form-loading"></div>
+      <p class="builder-thread-status" id="builder-thread-status" hidden aria-live="polite"></p>
       <p class="hint">Low-volume updates as the spec moves. Nothing else. Unsubscribe in one click.</p>
-    </form>
+    </div>
 
     <script>
+      (function (w, d, e, u, f, l, n) {
+        w[f] = w[f] || function () { (w[f].q = w[f].q || []).push(arguments); };
+        l = d.createElement(e); l.async = 1; l.src = u;
+        n = d.getElementsByTagName(e)[0]; n.parentNode.insertBefore(l, n);
+      })(window, document, 'script', 'https://assets.mailerlite.com/js/universal.js', 'ml');
+      ml('account', '2287781');
+      ml('forms', '185530176070747374');
+    </script>
+    <script>
       (function () {
-        var form = document.getElementById('builder-thread');
-        if (!form) return;
+        var FORM_ID = '185530176070747374';
+        var wrap = document.getElementById('builder-thread-embed');
+        var status = document.getElementById('builder-thread-status');
 
-        var handled = false;
-        function showSuccess() {
-          if (handled) return;
-          handled = true;
-          form.innerHTML =
-            '<p class="hint" style="color: var(--green); font-size: 13px; margin: 0;">' +
-            '✓ You\'re on the thread. Check your inbox — confirm the email and you\'re set.' +
-            '</p>';
+        function showStatus(message, type) {
+          if (!status) return;
+          status.textContent = message;
+          status.hidden = false;
+          status.className = 'builder-thread-status is-' + type;
         }
 
-        form.addEventListener('submit', function () {
-          var emailInput = form.querySelector('input[type="email"]');
-          var button = form.querySelector('button[type="submit"]');
-          if (!emailInput.value) return;
-
-          button.disabled = true;
-          button.textContent = 'Joining…';
-          setTimeout(showSuccess, 2500);
+        window.addEventListener('message', function (event) {
+          if (!event.data || typeof event.data !== 'string') return;
+          if (event.data.indexOf('mlWebformSubmitSuccess-' + FORM_ID) === 0) {
+            if (wrap) wrap.classList.remove('ml-form-loading');
+            showStatus('✓ You\'re on the thread. Check your inbox — confirm the email and you\'re set.', 'success');
+          }
         });
 
-        var sink = document.getElementById('ml-sink');
-        if (sink) {
-          sink.addEventListener('load', function () {
-            if (!form.querySelector('button')) return;
-            if (form.querySelector('button').disabled) showSuccess();
-          });
+        /* Style injected fields once MailerLite renders the embed */
+        var observer = new MutationObserver(function () {
+          if (!wrap) return;
+          wrap.classList.remove('ml-form-loading');
+          var email = wrap.querySelector('input[type="email"]');
+          if (email && !email.getAttribute('placeholder')) {
+            email.setAttribute('placeholder', 'you@domain.com');
+          }
+          var submit = wrap.querySelector('button[type="submit"], .ml-form-embedSubmit, .ml-button');
+          if (submit && submit.textContent.trim().length < 3) {
+            submit.textContent = 'Join the builder thread →';
+          }
+        });
+        var container = document.getElementById('mlb2-' + FORM_ID);
+        if (container) {
+          observer.observe(container, { childList: true, subtree: true });
         }
       })();
     </script>
