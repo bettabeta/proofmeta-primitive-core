@@ -2,25 +2,18 @@
 <html lang="en">
 <head>
 <!--
-  ProofMeta Protocol — homepage (v1)
-
-  All placeholders filled — page is ready to push.
-  - GitHub repos:      https://github.com/bettabeta/proofmeta-primitive-core
-  -                    https://github.com/bettabeta/proofmeta-license-contracts
-  - MailerLite form:   account 2287781 / form 185530176070747374
-
-  I18N STRATEGY (deferred):
-  When porting to Cursor/Next.js, extract every visible string into /i18n/en.json
-  keyed by section-id (e.g. hero.h1, lead.p1, obj.tooEarly.body). Markup stays
-  constant; swap the content dict per locale. No refactor needed in this file now —
-  the copy is kept block-contiguous to make extraction mechanical.
+  ProofMeta Protocol — homepage (v2)
+  Positioning: open protocol for machine-readable permissions (agentic web)
+  - GitHub: https://github.com/bettabeta/proofmeta-primitive-core
+  -         https://github.com/bettabeta/proofmeta-license-contracts
+  - MailerLite: account 2287781 / form 185530176070747374
 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ProofMeta Protocol — The hours went in. The revenue never did.</title>
-<meta name="description" content="An open licensing protocol for agent-consumable work. Machine-readable terms, chain-agnostic, Apache 2.0. Built for skill-builders who are tired of shipping free infrastructure.">
-<meta property="og:title" content="ProofMeta Protocol — The hours went in. The revenue never did.">
-<meta property="og:description" content="An open licensing protocol for agent-consumable work. Machine-readable terms, chain-agnostic, Apache 2.0.">
+<title>ProofMeta Protocol — Machine-readable permissions for the agentic web</title>
+<meta name="description" content="ProofMeta is an open protocol for machine-readable permissions, licenses and usage rights — so agents, apps and builders can understand what may be used, under which terms, and with what proof.">
+<meta property="og:title" content="ProofMeta Protocol — Permission rails for the agentic web">
+<meta property="og:description" content="An open protocol for machine-readable permissions, licenses and usage rights. Apache 2.0. Chain-agnostic. Protocol, not SaaS.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,7 +51,6 @@
 
   .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
-  /* nav */
   nav.top {
     border-bottom: 1px solid var(--hairline);
     padding: 14px 0;
@@ -75,7 +67,6 @@
   nav.top .links a { text-decoration: none; }
   nav.top .links a:hover { color: var(--ink); }
 
-  /* hero */
   header.hero { padding: 88px 0 64px; border-bottom: 1px solid var(--hairline); }
   .prompt { color: var(--muted); font-size: 13px; margin-bottom: 40px; line-height: 1.8; }
   .prompt .cmd { color: var(--green); }
@@ -94,8 +85,9 @@
   .subhead {
     font-size: clamp(15px, 1.5vw, 17px);
     color: var(--muted);
-    max-width: 620px;
+    max-width: 680px;
     margin: 0 0 40px;
+    line-height: 1.65;
   }
   .subhead strong { color: var(--ink); font-weight: 500; }
 
@@ -117,21 +109,106 @@
   .btn.ghost { border-color: var(--hairline); color: var(--muted); }
   .btn.ghost:hover { background: transparent; color: var(--amber); border-color: var(--amber); box-shadow: none; transform: none; }
 
-  /* meter */
-  .meter { margin: 56px 0 0; display: grid; gap: 4px; max-width: 560px; }
-  .meter .label { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
-  .meter .bar { height: 8px; background: var(--surface); position: relative; overflow: hidden; }
-  .meter .bar::before { content: ''; display: block; height: 100%; width: 94%; background: var(--amber); }
-  .meter .bar.zero::before { width: 1.5%; background: var(--red); }
+  section { padding: 80px 0; border-bottom: 1px solid var(--hairline); }
+  .section-no { color: var(--muted); font-size: 12px; letter-spacing: .18em; margin-bottom: 20px; }
+  h2 {
+    font-size: clamp(24px, 3.2vw, 38px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 28px;
+    font-weight: 700;
+    max-width: 760px;
+  }
+  h2 .amber { color: var(--amber); }
+  p { color: var(--muted); max-width: 640px; }
+  p + p { margin-top: 16px; }
+  p strong, p.bright { color: var(--ink); font-weight: 500; }
 
-  /* lead band */
-  .lead-band { padding: 56px 0 32px; border-bottom: 1px solid var(--hairline); }
-  .lead-text { font-size: 16px; line-height: 1.65; color: var(--ink); max-width: 720px; margin: 0 0 18px; }
-  .lead-text:last-child { margin-bottom: 0; }
-  .lead-text.dim-p { color: var(--muted); font-style: italic; }
-  .lead-text strong { color: var(--amber); font-weight: 500; }
+  .framing-lines {
+    margin: 36px 0 0;
+    display: grid;
+    gap: 14px;
+    max-width: 720px;
+  }
+  .framing-lines blockquote {
+    margin: 0;
+    padding: 14px 0 14px 18px;
+    border-left: 2px solid var(--amber);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.55;
+    font-style: normal;
+  }
 
-  /* components grid */
+  .rails {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 36px;
+    border: 1px solid var(--hairline);
+    max-width: 720px;
+  }
+  .rail {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--hairline);
+    background: var(--surface);
+    font-size: 13px;
+  }
+  .rail:last-child { border-bottom: 0; }
+  .rail .label { color: var(--amber); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: 11px; padding-top: 2px; }
+  .rail .label.active { color: var(--green); }
+  .rail p { margin: 0; max-width: none; font-size: 13px; }
+
+  pre.code {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    padding: 22px 24px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 32px 0;
+    color: var(--ink);
+  }
+  pre.code .k { color: var(--amber); }
+  pre.code .s { color: var(--green); }
+  pre.code .c { color: var(--muted); font-style: italic; }
+
+  .lifecycle {
+    display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+    margin: 32px 0 14px; font-size: 12px;
+  }
+  .lifecycle span.state {
+    padding: 6px 10px; border: 1px solid var(--hairline);
+    letter-spacing: .1em;
+  }
+  .lifecycle .s-open { color: var(--amber); border-color: var(--amber); }
+  .lifecycle .s-granted { color: var(--green); border-color: var(--green); }
+  .lifecycle .s-denied, .lifecycle .s-revoked { color: var(--red); border-color: var(--red); }
+  .lifecycle .arrow { color: var(--muted); padding: 6px 2px; }
+
+  .artefact-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 36px;
+    border: 1px solid var(--hairline);
+  }
+  .artefact {
+    padding: 20px 18px;
+    border-right: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    background: var(--surface);
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .artefact:nth-child(4n) { border-right: 0; }
+  .artefact:nth-last-child(-n+4) { border-bottom: 0; }
+  .artefact span { display: block; color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 6px; line-height: 1.45; }
+
   .components-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 36px; border: 1px solid var(--hairline); }
   .component { padding: 26px 28px; border-right: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); background: var(--surface); }
   .component:nth-child(2n) { border-right: 0; }
@@ -149,36 +226,7 @@
     vertical-align: 1px;
   }
   .component .c-no .status-badge.spec { color: var(--green); }
-  .component .c-no .status-badge.plan { color: var(--muted); }
-  @media (max-width: 640px) {
-    .components-grid { grid-template-columns: 1fr; }
-    .component { border-right: 0; border-bottom: 1px solid var(--hairline); }
-    .component:last-child { border-bottom: 0; }
-  }
 
-  /* quotes */
-  .quotes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 36px; }
-  .quote { margin: 0; padding: 24px; border: 1px dashed var(--hairline); background: transparent; }
-  .quote p { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 14px; font-style: italic; }
-  .quote cite { font-size: 11px; color: var(--amber); font-style: normal; letter-spacing: .05em; }
-  @media (max-width: 900px) { .quotes { grid-template-columns: 1fr; } }
-
-  /* sections */
-  section { padding: 80px 0; border-bottom: 1px solid var(--hairline); }
-  .section-no { color: var(--muted); font-size: 12px; letter-spacing: .18em; margin-bottom: 20px; }
-  h2 {
-    font-size: clamp(24px, 3.2vw, 38px);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin: 0 0 28px;
-    font-weight: 700;
-    max-width: 760px;
-  }
-  h2 .amber { color: var(--amber); }
-  p { color: var(--muted); max-width: 640px; }
-  p strong, p.bright { color: var(--ink); font-weight: 500; }
-
-  /* ledger */
   .ledger {
     border: 1px solid var(--hairline);
     margin-top: 40px;
@@ -200,36 +248,15 @@
   .ledger .totals { border-top: 1px solid var(--ink); font-weight: 700; }
   .ledger-caption { color: var(--muted); font-size: 11px; margin-top: 10px; font-style: italic; }
 
-  /* code block */
-  pre.code {
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    padding: 22px 24px;
-    overflow-x: auto;
-    font-size: 13px;
-    line-height: 1.7;
-    margin: 32px 0;
-    color: var(--ink);
+  .proof {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 32px;
   }
-  pre.code .k { color: var(--amber); }
-  pre.code .s { color: var(--green); }
-  pre.code .c { color: var(--muted); font-style: italic; }
+  .proof .card {
+    border: 1px solid var(--hairline); padding: 24px; background: var(--surface);
+  }
+  .proof .card h3 { margin: 0 0 8px; font-size: 14px; color: var(--amber); letter-spacing: .02em; }
+  .proof .card p { color: var(--muted); font-size: 13px; margin: 0; line-height: 1.55; max-width: none; }
 
-  /* lifecycle */
-  .lifecycle {
-    display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
-    margin: 32px 0 14px; font-size: 12px;
-  }
-  .lifecycle span.state {
-    padding: 6px 10px; border: 1px solid var(--hairline);
-    letter-spacing: .1em;
-  }
-  .lifecycle .s-open { color: var(--amber); border-color: var(--amber); }
-  .lifecycle .s-granted { color: var(--green); border-color: var(--green); }
-  .lifecycle .s-denied, .lifecycle .s-revoked { color: var(--red); border-color: var(--red); }
-  .lifecycle .arrow { color: var(--muted); padding: 6px 2px; }
-
-  /* objections */
   details.obj {
     border: 1px solid var(--hairline);
     margin-bottom: 12px;
@@ -245,20 +272,9 @@
   details.obj[open] summary::before { content: '>'; }
   details.obj summary:hover { color: var(--amber); }
   details.obj .body { padding: 0 20px 20px 44px; color: var(--muted); max-width: 640px; }
-  details.obj .body p { margin: 0 0 12px; }
+  details.obj .body p { margin: 0 0 12px; max-width: none; }
   details.obj .body p:last-child { margin-bottom: 0; }
 
-  /* proof */
-  .proof {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 32px;
-  }
-  .proof .card {
-    border: 1px solid var(--hairline); padding: 24px; background: var(--surface);
-  }
-  .proof .card h3 { margin: 0 0 8px; font-size: 14px; color: var(--amber); letter-spacing: .02em; }
-  .proof .card p { color: var(--muted); font-size: 13px; margin: 0; line-height: 1.55; }
-
-  /* builder thread form */
   .builder-thread {
     display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: stretch;
     max-width: 540px;
@@ -273,14 +289,9 @@
     font-size: 14px;
   }
   .builder-thread input[type="email"]::placeholder { color: var(--muted); }
-  .builder-thread input[type="email"]:focus {
-    outline: none; border-color: var(--amber);
-  }
-  .builder-thread .hint {
-    width: 100%; font-size: 11px; color: var(--muted); margin: 4px 0 0;
-  }
+  .builder-thread input[type="email"]:focus { outline: none; border-color: var(--amber); }
+  .builder-thread .hint { width: 100%; font-size: 11px; color: var(--muted); margin: 4px 0 0; }
 
-  /* final */
   .final { padding: 100px 0 88px; }
   .final h2 { max-width: 760px; }
   .final pre.code { max-width: 540px; }
@@ -294,11 +305,21 @@
   }
   footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 
-  /* responsive */
+  @media (max-width: 900px) {
+    .artefact-grid { grid-template-columns: repeat(2, 1fr); }
+    .artefact:nth-child(4n) { border-right: 1px solid var(--hairline); }
+    .artefact:nth-child(2n) { border-right: 0; }
+    .artefact:nth-last-child(-n+4) { border-bottom: 1px solid var(--hairline); }
+    .artefact:nth-last-child(-n+2) { border-bottom: 0; }
+  }
   @media (max-width: 720px) {
     .proof { grid-template-columns: 1fr; }
+    .rail { grid-template-columns: 1fr; gap: 8px; }
     header.hero { padding: 56px 0 48px; }
     section { padding: 64px 0; }
+    .components-grid { grid-template-columns: 1fr; }
+    .component { border-right: 0; border-bottom: 1px solid var(--hairline); }
+    .component:last-child { border-bottom: 0; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -313,115 +334,117 @@
   <div class="wrap">
     <div class="brand">proofmeta/<span>protocol</span></div>
     <div class="links">
-      <a href="#how">how it works</a>
-      <a href="#objections">questions</a>
-      <a href="#proof">who's behind it</a>
+      <a href="#permission-rails">permission rails</a>
+      <a href="#protocol">protocol</a>
+      <a href="#lifecycle">lifecycle</a>
       <a href="#spec">spec →</a>
     </div>
   </div>
 </nav>
 
-<header class="hero">
+<!-- 01 / Hero -->
+<header class="hero" id="hero">
   <div class="wrap">
     <div class="prompt" aria-hidden="true">
-      <span class="cmd">$</span> find ~/skills -type f -name "*.md" | wc -l<br>
-      <span class="out">→ 42</span><br>
-      <span class="cmd">$</span> awk '{sum+=$earnings} END {print sum}' ~/.ledger.csv<br>
-      <span class="out">→ €0</span>
+      <span class="cmd">$</span> agent compose --sources ./repo ./api ./dataset ./media<br>
+      <span class="out">→ 847 artefacts eligible</span><br>
+      <span class="cmd">$</span> agent permissions --check all<br>
+      <span class="out">→ ERROR: no machine-readable terms on 847/847</span>
     </div>
 
-    <h1 class="display">The hours went in. <span class="dim">The revenue never did.</span></h1>
+    <h1 class="display">Agents can build with anything. <span class="dim">That's the problem.</span></h1>
 
-    <p class="subhead"><strong>ProofMeta is an open licensing protocol for agent-consumable work.</strong> Machine-readable terms. Chain-agnostic. Apache 2.0. You ship the skill. The wrapper does the negotiating.</p>
+    <p class="subhead">ProofMeta is an open protocol for machine-readable permissions, licenses and usage rights — so agents, apps and builders can understand <strong>what may be used, under which terms, and with what proof.</strong> Apache 2.0. Chain-agnostic. Protocol, not SaaS.</p>
 
     <div class="cta-row">
       <a class="btn" href="https://github.com/bettabeta/proofmeta-primitive-core" target="_blank" rel="noopener">Read the spec →</a>
-      <a class="btn ghost" href="#how">See how it works</a>
-    </div>
-
-    <div class="meter" aria-hidden="true">
-      <div class="label"><span>Hours invested</span><span>thousands</span></div>
-      <div class="bar"></div>
-      <div class="label" style="margin-top:14px;"><span>Revenue back</span><span>€0</span></div>
-      <div class="bar zero"></div>
+      <a class="btn ghost" href="#permission-rails">Why permission rails</a>
     </div>
   </div>
 </header>
 
-<section class="lead-band" aria-label="Introduction">
+<!-- 02 / Why Agents Need Permission Rails -->
+<section id="permission-rails">
   <div class="wrap">
-    <p class="lead-text">For the builder whose best work is sitting in a public repo, earning stars instead of revenue. You didn't ship it to get rich. You shipped it because the problem was worth solving. Then it got scraped into training sets, folded into someone else's product, and quoted back to you without attribution.</p>
-    <p class="lead-text">ProofMeta gives you what open source didn't build: <strong>a wrapper agents can parse.</strong> A license file that sits next to your skill, defines the terms, and holds when an agent asks to use it. Chain-agnostic. Machine-readable. Apache 2.0.</p>
-    <p class="lead-text">Ten minutes to wrap your first skill. Zero to read the spec.</p>
-    <p class="lead-text dim-p">But first, the ledger.</p>
-  </div>
-</section>
+    <div class="section-no">02 / WHY AGENTS NEED PERMISSION RAILS</div>
+    <h2>The agentic web does not only need payment rails. <span class="amber">It needs permission rails.</span></h2>
+    <p>If humans already struggle to understand what they are allowed to do with digital artefacts, agents will need a machine-readable permission layer before they can safely build, remix, execute or transact on our behalf.</p>
+    <p class="bright">Humans can interpret rights. Agents need them expressed.</p>
 
-<section id="problem">
-  <div class="wrap">
-    <div class="section-no">01 / THE LEDGER</div>
-    <h2>Your skills live on GitHub. <span class="amber">Your margin lives somewhere else.</span></h2>
-    <p>If you shipped a reusable skill in the last year — a Claude agent, a prompt pack, a dataset, an orchestration kit — your work is already being consumed. The part that pays for it isn't you.</p>
-
-    <div class="ledger" role="table" aria-label="Illustrative builder ledger">
-      <div class="head" role="row">
-        <span>Skill</span><span>Where it lives</span><span>Downloads</span><span>Earned</span>
+    <div class="rails" aria-label="What each layer answers">
+      <div class="rail">
+        <div class="label">Payments</div>
+        <p>Was value exchanged?</p>
       </div>
-      <div class="row" role="row">
-        <span>onboarding-flow.md</span><span>GitHub</span><span>2,341</span><span class="zero">€0</span>
+      <div class="rail">
+        <div class="label">Identity</div>
+        <p>Who acted?</p>
       </div>
-      <div class="row" role="row">
-        <span>agent-orchestration</span><span>plugin directory</span><span>1,502</span><span class="zero">€0</span>
-      </div>
-      <div class="row" role="row">
-        <span>prompt-chain-kit</span><span>personal newsletter</span><span>4,721</span><span class="zero">€0</span>
-      </div>
-      <div class="totals" role="row">
-        <span>TOTAL</span><span></span><span>8,564</span><span class="zero">€0</span>
+      <div class="rail">
+        <div class="label active">ProofMeta</div>
+        <p>Was it allowed — under which terms, with what proof?</p>
       </div>
     </div>
-    <div class="ledger-caption">// illustrative — swap in your numbers</div>
+
+    <div class="framing-lines">
+      <blockquote>The agentic web does not only need payment rails. It needs permission rails.</blockquote>
+      <blockquote>Payments answer: was value exchanged? Identity answers: who acted? ProofMeta answers: was it allowed?</blockquote>
+      <blockquote>Humans can interpret rights. Agents need them expressed.</blockquote>
+    </div>
   </div>
 </section>
 
-<section id="why">
+<!-- 03 / What ProofMeta Is -->
+<section id="protocol">
   <div class="wrap">
-    <div class="section-no">02 / WHY THERE'S NO WRAPPER YET</div>
-    <h2>Agents don't pay because there's nothing to pay to.</h2>
-    <p>Open source taught the last decade how to share code. It didn't teach the next one how to price an agent-consumable skill. So the default is still: publish, get scraped, watch it compound into someone else's product.</p>
-    <p class="bright">A model can't negotiate with a README. It needs terms it can parse, request, and obey. Until that layer exists, every skill you ship is subsidy.</p>
+    <div class="section-no">03 / WHAT PROOFMETA IS</div>
+    <h2>A protocol primitive for digital artefacts — <span class="amber">not a platform.</span></h2>
+    <p>ProofMeta is an open specification for wrapping digital artefacts in machine-readable permission metadata. Skills are the first use case — not the category. The same primitive applies to datasets, APIs, code, documents, media, model outputs and agent capabilities.</p>
+    <p><strong>The license is a pointer, not a contract.</strong> It references terms, scopes and proof — it does not replace counsel. ProofMeta does not replace legal agreements. It makes permission computable.</p>
+    <p class="bright">Open. Neutral. No lock-in. No marketplace dependency. No platform capture. Builder-native infrastructure — not a storefront.</p>
+
+    <div class="components-grid">
+      <div class="component">
+        <div class="c-no">LAYER 01 <span class="status-badge spec">SHIPPED</span></div>
+        <h3>Primitive Core</h3>
+        <p>Signed envelopes, DID identity, ed25519 signatures, JCS hashing, status lifecycle. Cryptographic foundation. TypeScript SDK + CLI on npm.</p>
+      </div>
+      <div class="component">
+        <div class="c-no">LAYER 02 <span class="status-badge spec">SHIPPED</span></div>
+        <h3>License Contracts</h3>
+        <p>Chain-agnostic license semantics. Scope tags, pricing models, ready-made templates. One JSON object per permission surface.</p>
+      </div>
+      <div class="component">
+        <div class="c-no">LAYER 03 <span class="status-badge spec">SHIPPED</span></div>
+        <h3>SDK + CLI</h3>
+        <p>Create envelopes, sign, verify, chain. Validate any ProofMeta artifact from your terminal. <code>npm i @proofmeta/sdk-ts</code></p>
+      </div>
+      <div class="component">
+        <div class="c-no">LAYER 04 <span class="status-badge spec">PLANNED</span></div>
+        <h3>Execution Layer</h3>
+        <p>Pluggable resolvers for payment, delivery and anchoring. Pick your stack — the permission logic stays portable.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<section id="story">
+<!-- 04 / How The Lifecycle Works -->
+<section id="lifecycle">
   <div class="wrap">
-    <div class="section-no">03 / THE STORY</div>
-    <h2>A decade on the licensing problem. <span class="amber">Then the consumer changed.</span></h2>
-    <p>I spent most of the last decade on licensing and IP — co-building <strong>license.rocks</strong>, and then working alongside enterprises and creators whose output <em>was</em> the IP. Music and art especially: world-class craft, almost no licensing scaffolding around it. For a long time, the job was building that scaffolding for humans to read.</p>
-    <p>Then the consumer changed.</p>
-    <p>A model doesn't read a PDF. It doesn't care what's in your footer. An agent deciding whether to use your skill runs at thousands of requests per minute. Either the terms are in a format it can parse, or the terms might as well not exist. Every document built for human readers goes invisible the moment an agent is in the loop.</p>
-    <p><strong>Look at the licensing surfaces that exist today — all built for human readers.</strong> A LICENSE.md in the repo: models ignore it. A clickwrap on a distribution page: agents don't click. A platform-specific agreement: solves one surface, leaves every other exposed.</p>
-    <p>The durable fix had to be a neutral protocol. Not a platform. Not a storefront. A file format and a status lifecycle any skill can ship with, any agent can parse, and any chain can verify.</p>
-    <p class="bright">That's ProofMeta Protocol.</p>
-  </div>
-</section>
+    <div class="section-no">04 / HOW THE LIFECYCLE WORKS</div>
+    <h2>Discover. Request. Decide. <span class="amber">Act with proof.</span></h2>
+    <p>An agent or app discovers permission metadata attached to an artefact, requests access, receives a machine-readable grant or denial, and acts only inside the terms — with an auditable trail.</p>
 
-<section id="how">
-  <div class="wrap">
-    <div class="section-no">04 / HOW IT WORKS</div>
-    <h2>A manifest. A request. A grant.</h2>
-    <p>ProofMeta wraps a skill in a machine-readable license. Agents discover it, request access, get a decision, and act inside the terms you set. The wrapper is the surface. The skill stays yours.</p>
-
-<pre class="code" aria-label="Example license"><span class="c">// A license is four things. That's it.</span>
+<pre class="code" aria-label="Example permission object"><span class="c">// Permission metadata — pointer to terms, not the contract itself</span>
 {
-  <span class="k">"id"</span>:         <span class="s">"commercial-standard"</span>,
-  <span class="k">"scope"</span>:      [<span class="s">"commercial"</span>, <span class="s">"derivative-allowed"</span>, <span class="s">"ai-training-excluded"</span>],
-  <span class="k">"terms_url"</span>:  <span class="s">"https://youragent.ai/terms/commercial"</span>,
+  <span class="k">"artefact"</span>:   <span class="s">"urn:proofmeta:skill:onboarding-flow"</span>,
+  <span class="k">"scope"</span>:      [<span class="s">"execute"</span>, <span class="s">"derivative-allowed"</span>, <span class="s">"training-excluded"</span>],
+  <span class="k">"terms_url"</span>:  <span class="s">"https://example.com/terms/onboarding-flow"</span>,
   <span class="k">"terms_hash"</span>: <span class="s">"sha256:a1b2c3..."</span>,
-  <span class="k">"pricing"</span>:    { <span class="k">"model"</span>: <span class="s">"one-time"</span>, <span class="k">"amount"</span>: <span class="s">"5.00"</span>, <span class="k">"currency"</span>: <span class="s">"USD"</span> }
+  <span class="k">"proof"</span>:      { <span class="k">"envelope_id"</span>: <span class="s">"env_..."</span>, <span class="k">"status"</span>: <span class="s">"GRANTED"</span> }
 }</pre>
 
-    <div class="lifecycle" aria-label="License lifecycle states">
+    <div class="lifecycle" aria-label="Permission lifecycle states">
       <span class="state s-open">OPEN</span>
       <span class="arrow">→</span>
       <span class="state">PENDING</span>
@@ -432,130 +455,114 @@
       <span class="arrow">→</span>
       <span class="state s-revoked">REVOKED</span>
     </div>
-    <p style="font-size:12px; margin-top:0;">Every state is machine-readable. Every transition is auditable. Every revoke is enforceable.</p>
+    <p style="font-size:12px; margin-top:0;">Every state is machine-readable. Every transition is auditable. Revocation is expressible — not implied.</p>
   </div>
 </section>
 
-<section id="components">
+<!-- 05 / What It Can Wrap -->
+<section id="artefacts">
   <div class="wrap">
-    <div class="section-no">05 / WHAT'S IN THE PROTOCOL</div>
-    <h2>Three layers. All open. Built to stack, not to lock.</h2>
-    <p>The protocol is a specification, not a product. Everything below is covered under Apache 2.0, versioned in public, and shippable without asking. Lower layers never depend on higher ones — swap your payment rail without touching the license logic.</p>
+    <div class="section-no">05 / WHAT IT CAN WRAP</div>
+    <h2>One permission primitive. <span class="amber">Many artefact types.</span></h2>
+    <p>ProofMeta does not assume a single content type. Any digital artefact an agent might discover, compose, remix or execute can carry the same permission envelope.</p>
 
-    <div class="components-grid">
-      <div class="component">
-        <div class="c-no">LAYER 01 <span class="status-badge spec">SHIPPED</span></div>
-        <h3>Primitive Core</h3>
-        <p>Signed Envelopes, DID identity, ed25519 signatures, JCS hashing, status lifecycle. The cryptographic foundation. TypeScript SDK + CLI validator published on npm.</p>
-      </div>
-      <div class="component">
-        <div class="c-no">LAYER 02 <span class="status-badge spec">SHIPPED</span></div>
-        <h3>License Contracts</h3>
-        <p>Chain-agnostic license semantics. Scope tags, pricing models (free, one-time, subscription, usage-based), and ready-made templates you can copy-paste. One JSON object per license.</p>
-      </div>
-      <div class="component">
-        <div class="c-no">LAYER 03 <span class="status-badge plan">NEXT</span></div>
-        <h3>Execution Layer</h3>
-        <p>Chain-specific resolvers for payment (Stripe, x402, Lightning), delivery (HTTPS, IPFS), and anchoring (Solana PDA, EVM). Pluggable — pick your stack, the protocol doesn't care.</p>
-      </div>
-      <div class="component">
-        <div class="c-no">LAYER 04 <span class="status-badge spec">SHIPPED</span></div>
-        <h3>SDK + CLI</h3>
-        <p>TypeScript SDK: create envelopes, sign, verify, chain. CLI: validate any ProofMeta artifact from your terminal. <code>npm i @proofmeta/sdk-ts</code> — drop-in, zero config.</p>
-      </div>
+    <div class="artefact-grid" role="list">
+      <div class="artefact" role="listitem">Skills<span>Agent workflows, prompt packs, orchestration kits</span></div>
+      <div class="artefact" role="listitem">Datasets<span>Training data, corpora, labelled collections</span></div>
+      <div class="artefact" role="listitem">APIs<span>Endpoints, tools, callable capabilities</span></div>
+      <div class="artefact" role="listitem">Code<span>Repos, modules, generated snippets</span></div>
+      <div class="artefact" role="listitem">Documents<span>Specs, policies, knowledge bases</span></div>
+      <div class="artefact" role="listitem">Media<span>Audio, video, images, creative assets</span></div>
+      <div class="artefact" role="listitem">Model outputs<span>Generations, embeddings, derivatives</span></div>
+      <div class="artefact" role="listitem">Agent capabilities<span>Registered tools, composable functions</span></div>
     </div>
   </div>
 </section>
 
-<section id="responses">
+<!-- 06 / First Use Case: Skills -->
+<section id="skills">
   <div class="wrap">
-    <div class="section-no">06 / EARLY RESPONSES</div>
-    <h2>Honest disclosure: pre-launch.</h2>
-    <p>ProofMeta Protocol is pre-launch. There are no customer quotes yet — and we won't invent them. The placeholders below will fill as builders wrap their first skills. If you want to be one of them, the spec is below.</p>
+    <div class="section-no">06 / FIRST USE CASE: SKILLS</div>
+    <h2>Skills are the first case, <span class="amber">not the only one.</span></h2>
+    <p>Reusable agent skills are already shipped in public — often without machine-readable terms. They are a sharp proof point: high reuse, high ambiguity, high risk when agents compose them at scale.</p>
+    <p class="bright">The hours went in. The revenue never did.</p>
+    <p>That line is not the whole story. It is one builder outcome when permission metadata is missing — stars instead of terms, reuse without proof, margin somewhere else.</p>
 
-    <div class="quotes">
-      <blockquote class="quote">
-        <p>[PLACEHOLDER — needs real quote from a skill-builder who wrapped a skill]</p>
-        <cite>Name · Role · Location</cite>
-      </blockquote>
-      <blockquote class="quote">
-        <p>[PLACEHOLDER — needs real quote from a technical founder shipping agent-consumable work]</p>
-        <cite>Name · Role · Location</cite>
-      </blockquote>
-      <blockquote class="quote">
-        <p>[PLACEHOLDER — needs real quote from an agent platform implementer]</p>
-        <cite>Name · Role · Location</cite>
-      </blockquote>
+    <div class="ledger" role="table" aria-label="Illustrative skills ledger">
+      <div class="head" role="row">
+        <span>Skill</span><span>Where it lives</span><span>Uses</span><span>Terms</span>
+      </div>
+      <div class="row" role="row">
+        <span>onboarding-flow.md</span><span>GitHub</span><span>2,341</span><span class="zero">none</span>
+      </div>
+      <div class="row" role="row">
+        <span>agent-orchestration</span><span>plugin directory</span><span>1,502</span><span class="zero">none</span>
+      </div>
+      <div class="row" role="row">
+        <span>prompt-chain-kit</span><span>public repo</span><span>4,721</span><span class="zero">none</span>
+      </div>
+      <div class="totals" role="row">
+        <span>TOTAL</span><span></span><span>8,564</span><span class="zero">0 wrapped</span>
+      </div>
     </div>
+    <div class="ledger-caption">// illustrative — permission metadata, not monetization hype</div>
   </div>
 </section>
 
-<section id="objections">
+<!-- 07 / For Builders -->
+<section id="builders">
   <div class="wrap">
-    <div class="section-no">07 / QUESTIONS WE GET</div>
-    <h2>The honest objections, answered honestly.</h2>
+    <div class="section-no">07 / FOR BUILDERS</div>
+    <h2>Open infrastructure for people shipping on the agentic web.</h2>
+    <p>ProofMeta is written in public under Apache 2.0. Implement without permission. Fork without capture. No vendor account. No marketplace listing required.</p>
+    <p>I'm Daud — in software since the late 1990s, most of the last decade on licensing and IP. ProofMeta compounds that work into the era where agents, not lawyers, need to parse what is allowed.</p>
 
-    <details class="obj">
-      <summary><span>"Too early. There's no buyer side yet."</span></summary>
+    <div class="proof">
+      <div class="card">
+        <h3>Protocol, not SaaS</h3>
+        <p>A spec and reference implementations — not a hosted product with a take rate.</p>
+      </div>
+      <div class="card">
+        <h3>Neutral by design</h3>
+        <p>Chain-agnostic. Platform-agnostic. If a platform adopts it, builders keep portability.</p>
+      </div>
+      <div class="card">
+        <h3>Pointer, not contract</h3>
+        <p>Machine-readable permission metadata references legal terms — it does not replace them.</p>
+      </div>
+      <div class="card">
+        <h3>Pre-launch, honest</h3>
+        <p>No fake testimonials. No inflated claims. The spec is live; implementations are early.</p>
+      </div>
+    </div>
+
+    <details class="obj" style="margin-top:36px;">
+      <summary><span>"Is this only about monetizing skills?"</span></summary>
       <div class="body">
-        <p>Correct. Agents aren't paying for much of anything right now. That's exactly why the protocol needs to exist before the demand wave lands — not after. The alternative is watching an incumbent bake their version into a closed platform and finding out what their take rate is.</p>
-        <p>Wrap early while the surface is cheap. Wait, and the terms get set without you.</p>
+        <p>No. Skills are the first visible use case because they are already agent-consumed at scale. ProofMeta is a permission primitive for any digital artefact — free, paid, or internal.</p>
       </div>
     </details>
-
     <details class="obj">
-      <summary><span>"Anthropic or OpenAI will just build this in."</span></summary>
+      <summary><span>"Does this replace my lawyer?"</span></summary>
       <div class="body">
-        <p>They might. They'll build it vendor-locked, chain-specific, and tuned for their economics. ProofMeta is chain-agnostic, AI-first, and Apache 2.0 — infrastructure, not a storefront. If a platform adopts it, builders keep portability. If a platform forks it, builders keep the option.</p>
-        <p>Neutral layers tend to outlive the platforms that try to replace them.</p>
+        <p>No. ProofMeta makes permission computable for agents and apps. Legal agreements still exist — the protocol gives machines something parseable to point at.</p>
       </div>
     </details>
-
     <details class="obj">
-      <summary><span>"Why wrap work I'm giving away for free?"</span></summary>
+      <summary><span>"Which runtimes can use this?"</span></summary>
       <div class="body">
-        <p>You don't have to price it. The wrapper is the record — that you shipped it, on what terms, and under what conditions it can be reused. Free becomes a policy choice instead of a default you cannot reverse later.</p>
-      </div>
-    </details>
-
-    <details class="obj">
-      <summary><span>"How long does it take to wrap a skill?"</span></summary>
-      <div class="body">
-        <p>About ten minutes for a first skill. Write a manifest. Point the reference implementation at it. Done. Production-grade wrappers take longer — but that's an engineering choice, not a protocol requirement.</p>
-      </div>
-    </details>
-
-    <details class="obj">
-      <summary><span>"Which agent runtimes does this work with?"</span></summary>
-      <div class="body">
-        <p>Any runtime that can make an HTTP call and parse YAML or JSON. That's effectively every agent framework shipped in the last two years. There's no SDK lock-in — the SDKs are convenience, not a dependency.</p>
-      </div>
-    </details>
-
-    <details class="obj">
-      <summary><span>"Is this on a chain?"</span></summary>
-      <div class="body">
-        <p>It can be. It doesn't have to be. Chain-agnostic means the protocol works with or without on-chain settlement. Builders pick their stack. Some items benefit from on-chain verification. Most don't.</p>
+        <p>Any runtime that can fetch JSON or YAML and verify signatures. SDKs are convenience — not a lock-in layer.</p>
       </div>
     </details>
   </div>
 </section>
 
-<section id="proof">
-  <div class="wrap">
-    <div class="section-no">08 / WHO'S BEHIND IT</div>
-    <h2>One person. A decade on the licensing problem.</h2>
-    <p>I'm Daud. I've been in software since the late 1990s and spent most of the last decade on licensing and IP — co-building <strong>license.rocks</strong>, then working alongside enterprises and, more often, creators whose output <em>was</em> the IP but who had no licensing layer to hold it. Music and art especially: the craft was world-class, the rights scaffolding around it was almost always missing.</p>
-    <p>That's the pattern ProofMeta is built on. Agents are the next consumer, and they need the same thing those creators needed — a wrapper the surface can actually read. Not a leap into a new category. The compounding of a decade of work into the era where models, not lawyers, are the parsers.</p>
-    <p class="bright">ProofMeta is a one-person protocol project today. Apache 2.0, written in public, open to anyone who wants to build on it.</p>
-  </div>
-</section>
-
+<!-- 08 / Read The Spec -->
 <section class="final" id="spec">
   <div class="wrap">
-    <div class="section-no">09 / GET THE SPEC</div>
-    <h2>Wrap one skill. Watch the ledger move.</h2>
-    <p>The spec is Apache 2.0 and open for implementation. No waitlist. No permission. No sign-up wall.</p>
+    <div class="section-no">08 / READ THE SPEC</div>
+    <h2>Implement the permission layer. <span class="amber">No waitlist.</span></h2>
+    <p>The spec is Apache 2.0 and open for implementation. Clone it. Run the demo. Wrap your first artefact.</p>
 
 <pre class="code"><span class="c"># 1. read the spec</span>
 <span class="k">$</span> git clone <span class="s">https://github.com/bettabeta/proofmeta-primitive-core</span>
@@ -563,31 +570,16 @@
 <span class="c"># 2. install the SDK + run the end-to-end demo</span>
 <span class="k">$</span> cd proofmeta-primitive-core <span class="s">&&</span> npm install <span class="s">&&</span> npm run e2e
 
-<span class="c"># 3. browse the license templates</span>
+<span class="c"># 3. browse license templates</span>
 <span class="k">$</span> git clone <span class="s">https://github.com/bettabeta/proofmeta-license-contracts</span>
 
-<span class="c"># 4. wrap your own skill — see examples/provider for a 20-line starting point</span></pre>
+<span class="c"># 4. wrap an artefact — see examples/ for starting points</span></pre>
 
     <div class="cta-row">
       <a class="btn" href="https://github.com/bettabeta/proofmeta-primitive-core" target="_blank" rel="noopener">Primitive Core →</a>
       <a class="btn ghost" href="https://github.com/bettabeta/proofmeta-license-contracts" target="_blank" rel="noopener">License Contracts →</a>
     </div>
 
-    <!--
-      Builder thread = soft opt-in, NOT a waitlist.
-      Framing: updates from implementers as the protocol moves. Voice-consistent with "no permission, no sign-up wall."
-      MailerLite form ID: 185530176070747374 (account 2287781)
-
-      Approach: submit to a hidden iframe so the navigation stays on-page, then
-      swap the form to a success state. The iframe absorbs MailerLite's raw
-      {"success":true} response. A 2.5s timeout triggers the success state as
-      a safety net (if the iframe load event is suppressed by cross-origin,
-      the subscription itself still went through — GDPR double opt-in means
-      the real confirmation is in the user's inbox).
-
-      Belt-and-suspenders: MailerLite's "After subscribe → Redirect to URL"
-      points at /thanks so a full-page fallback lands somewhere branded.
-    -->
     <iframe name="ml-sink" id="ml-sink" style="display:none" aria-hidden="true" tabindex="-1"></iframe>
     <form class="builder-thread" id="builder-thread"
           action="https://assets.mailerlite.com/jsonp/2287781/forms/185530176070747374/subscribe"
@@ -623,17 +615,12 @@
 
           button.disabled = true;
           button.textContent = 'Joining…';
-
-          // Safety net: if iframe load doesn't fire (cross-origin suppression),
-          // the POST still went through — show success after 2.5s.
           setTimeout(showSuccess, 2500);
         });
 
-        // If the iframe fires a load event after submission, trust it and swap.
         var sink = document.getElementById('ml-sink');
         if (sink) {
           sink.addEventListener('load', function () {
-            // Ignore the initial blank load.
             if (!form.querySelector('button')) return;
             if (form.querySelector('button').disabled) showSuccess();
           });
@@ -646,7 +633,7 @@
 <footer>
   <div class="wrap">
     <span>Pandr UG · Solmsstraße 38, 10961 Berlin</span>
-    <span>Apache 2.0 · chain-agnostic · AI-first</span>
+    <span>Apache 2.0 · chain-agnostic · permission rails</span>
   </div>
 </footer>
 
