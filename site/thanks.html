@@ -65,10 +65,14 @@
     z-index: 10;
   }
   nav.top .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; }
-  nav.top a.brand { color: var(--amber); font-weight: 700; letter-spacing: .02em; text-decoration: none; }
-  nav.top a.brand span { color: var(--ink); }
-  nav.top a.brand:hover { color: var(--amber); }
-  nav.top a.brand:hover span { color: var(--ink); }
+  nav.top a.brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    line-height: 0;
+  }
+  nav.top .brand-logo { height: 44px; width: auto; display: block; }
+  nav.top a.brand:hover .brand-logo { opacity: 0.88; }
   nav.top .links { display: flex; gap: 20px; color: var(--muted); flex-wrap: wrap; }
   nav.top .links a { text-decoration: none; }
   nav.top .links a:hover { color: var(--ink); }
@@ -219,7 +223,9 @@
 
 <nav class="top" aria-label="Primary">
   <div class="wrap">
-    <a class="brand" href="/">proofmeta/<span>protocol</span></a>
+    <a class="brand" href="/" aria-label="ProofMeta Protocol">
+      <img class="brand-logo" src="assets/proofmeta-logo.png" alt="ProofMeta" width="264" height="44">
+    </a>
     <div class="links">
       <a href="/#how">how it works</a>
       <a href="/#objections">questions</a>

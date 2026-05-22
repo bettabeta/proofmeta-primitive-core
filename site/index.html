@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
 <!--
-  ProofMeta Protocol — homepage (v2)
-  Positioning: open protocol for machine-readable permissions (agentic web)
+  ProofMeta Protocol — homepage (v3)
+  Positioning: open infrastructure for machine-readable licensing (agentic era)
   - GitHub: https://github.com/bettabeta/proofmeta-primitive-core
   -         https://github.com/bettabeta/proofmeta-license-contracts
-  - MailerLite embed: account 2287781 / form 185530176070747374 (universal.js + reCAPTCHA)
+  - MailerLite embed: account 2287781 / formId in mailerlite.config.js
 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ProofMeta Protocol — Machine-readable permissions for the agentic web</title>
-<meta name="description" content="ProofMeta is an open protocol for machine-readable permissions, licenses and usage rights — so agents, apps and builders can understand what may be used, under which terms, and with what proof.">
-<meta property="og:title" content="ProofMeta Protocol — Permission rails for the agentic web">
-<meta property="og:description" content="An open protocol for machine-readable permissions, licenses and usage rights. Apache 2.0. Chain-agnostic. Protocol, not SaaS.">
+<title>ProofMeta Protocol — Machine-readable licensing for the agentic era</title>
+<meta name="description" content="ProofMeta is an open protocol for machine-readable licensing, permissions and usage policies — so agents and autonomous systems can discover, verify and act on rights at scale.">
+<meta property="og:title" content="ProofMeta Protocol — Open infrastructure for machine-readable rights">
+<meta property="og:description" content="An open specification for machine-readable licensing, permissions and usage policies. Apache 2.0. Chain-agnostic. Protocol, not SaaS.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -61,8 +61,14 @@
     z-index: 10;
   }
   nav.top .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; }
-  nav.top .brand { color: var(--amber); font-weight: 700; letter-spacing: .02em; }
-  nav.top .brand span { color: var(--ink); }
+  nav.top a.brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    line-height: 0;
+  }
+  nav.top .brand-logo { height: 44px; width: auto; display: block; }
+  nav.top a.brand:hover .brand-logo { opacity: 0.88; }
   nav.top .links { display: flex; gap: 20px; color: var(--muted); flex-wrap: wrap; }
   nav.top .links a { text-decoration: none; }
   nav.top .links a:hover { color: var(--ink); }
@@ -213,6 +219,43 @@
   .component { padding: 26px 28px; border-right: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); background: var(--surface); }
   .component:nth-child(2n) { border-right: 0; }
   .component:nth-last-child(-n+2) { border-bottom: 0; }
+
+  .ecosystem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 36px; border: 1px solid var(--hairline); }
+  .ecosystem { padding: 26px 28px; border-right: 1px solid var(--hairline); background: var(--surface); }
+  .ecosystem:last-child { border-right: 0; }
+  .ecosystem .e-tag { font-size: 11px; letter-spacing: .18em; color: var(--amber); margin-bottom: 10px; text-transform: uppercase; }
+  .ecosystem .e-tag.commercial { color: var(--muted); }
+  .ecosystem h3 { margin: 0 0 12px; font-size: 15px; font-weight: 700; color: var(--ink); }
+  .ecosystem .e-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .ecosystem .e-brand-link:hover { color: var(--amber); }
+  .ecosystem .e-logo { width: 28px; height: 28px; display: block; flex-shrink: 0; }
+  .ecosystem ul { margin: 0; padding: 0; list-style: none; }
+  .ecosystem li { color: var(--muted); font-size: 13px; line-height: 1.55; padding: 6px 0; border-top: 1px dashed var(--hairline); }
+  .ecosystem li:first-child { border-top: 0; padding-top: 0; }
+
+  .scenario-list {
+    margin: 36px 0 0;
+    border: 1px solid var(--hairline);
+    max-width: 720px;
+    background: var(--surface);
+  }
+  .scenario {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--hairline);
+    font-size: 13px;
+  }
+  .scenario:last-child { border-bottom: 0; }
+  .scenario .s-label { color: var(--amber); font-weight: 700; letter-spacing: .04em; font-size: 11px; text-transform: uppercase; padding-top: 2px; }
+  .scenario p { margin: 0; max-width: none; font-size: 13px; }
   .component .c-no { font-size: 11px; letter-spacing: .18em; color: var(--amber); margin-bottom: 10px; }
   .component h3 { margin: 0 0 8px; font-size: 15px; font-weight: 700; color: var(--ink); }
   .component p { color: var(--muted); font-size: 13px; margin: 0; line-height: 1.55; max-width: none; }
@@ -293,7 +336,7 @@
   .builder-thread-embed .builder-thread-status.is-success { color: var(--green); }
   .builder-thread-embed .builder-thread-status.is-error { color: var(--red); }
 
-  /* MailerLite embed — match site design, hide ML chrome */
+  /* MailerLite ml-embedded — match site design, hide ML chrome */
   .builder-thread-embed .ml-form-embedContainer,
   .builder-thread-embed .ml-form-embedWrapper,
   .builder-thread-embed .ml-form-embedBody,
@@ -452,6 +495,10 @@
     .components-grid { grid-template-columns: 1fr; }
     .component { border-right: 0; border-bottom: 1px solid var(--hairline); }
     .component:last-child { border-bottom: 0; }
+    .ecosystem-grid { grid-template-columns: 1fr; }
+    .ecosystem { border-right: 0; border-bottom: 1px solid var(--hairline); }
+    .ecosystem:last-child { border-bottom: 0; }
+    .scenario { grid-template-columns: 1fr; gap: 8px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -464,11 +511,13 @@
 
 <nav class="top" aria-label="Primary">
   <div class="wrap">
-    <div class="brand">proofmeta/<span>protocol</span></div>
+    <a class="brand" href="#hero" aria-label="ProofMeta Protocol">
+      <img class="brand-logo" src="assets/proofmeta-logo.png" alt="ProofMeta" width="264" height="44">
+    </a>
     <div class="links">
-      <a href="#permission-rails">permission rails</a>
-      <a href="#protocol">protocol</a>
-      <a href="#lifecycle">lifecycle</a>
+      <a href="#problem">the problem</a>
+      <a href="#ecosystem">protocol · sdk · pandr</a>
+      <a href="#architecture">architecture</a>
       <a href="#spec">spec →</a>
     </div>
   </div>
@@ -484,94 +533,169 @@
       <span class="out">→ ERROR: no machine-readable terms on 847/847</span>
     </div>
 
-    <h1 class="display">Agents can build with anything. <span class="dim">That's the problem.</span></h1>
+    <h1 class="display">AI agents can execute tasks. <span class="dim">But they still don't understand rights.</span></h1>
 
-    <p class="subhead">ProofMeta is an open protocol for machine-readable permissions, licenses and usage rights — so agents, apps and builders can understand <strong>what may be used, under which terms, and with what proof.</strong> Apache 2.0. Chain-agnostic. Protocol, not SaaS.</p>
+    <p class="subhead">ProofMeta is an open protocol for machine-readable licensing, permissions and usage policies — so agents and autonomous systems can discover, verify and act on rights at scale. <strong>Apache 2.0. Chain-agnostic. Specification, not SaaS.</strong></p>
 
     <div class="cta-row">
-      <a class="btn" href="https://github.com/bettabeta/proofmeta-primitive-core" target="_blank" rel="noopener">Read the spec →</a>
-      <a class="btn ghost" href="#permission-rails">Why permission rails</a>
+      <a class="btn ghost" href="#problem">Why this matters</a>
+      <a class="btn" href="#spec">Read the spec →</a>
     </div>
   </div>
 </header>
 
-<!-- 02 / Why Agents Need Permission Rails -->
-<section id="permission-rails">
+<!-- 02 / The Problem -->
+<section id="problem">
   <div class="wrap">
-    <div class="section-no">02 / WHY AGENTS NEED PERMISSION RAILS</div>
-    <h2>The agentic web does not only need payment rails. <span class="amber">It needs permission rails.</span></h2>
-    <p>If humans already struggle to understand what they are allowed to do with digital artefacts, agents will need a machine-readable permission layer before they can safely build, remix, execute or transact on our behalf.</p>
-    <p class="bright">Humans can interpret rights. Agents need them expressed.</p>
+    <div class="section-no">02 / THE PROBLEM</div>
+    <h2>Humans already struggle with usage rights. <span class="amber">Agents will struggle at scale.</span></h2>
+    <p>Autonomous systems now consume datasets, call APIs, remix prompts, reuse generated outputs and chain tools together — often without a machine-verifiable answer to a basic question: <strong>is this allowed, under which terms, with what proof?</strong></p>
 
-    <div class="rails" aria-label="What each layer answers">
+    <div class="scenario-list" aria-label="Where the rights gap appears">
+      <div class="scenario">
+        <div class="s-label">Datasets</div>
+        <p>An agent ingests a corpus. The license is a PDF in a footer link. No scope tags. No training exclusion. No verifiable grant.</p>
+      </div>
+      <div class="scenario">
+        <div class="s-label">APIs &amp; tools</div>
+        <p>A workflow calls third-party endpoints. Terms of service exist — but not in a form a runtime can parse, compare or enforce.</p>
+      </div>
+      <div class="scenario">
+        <div class="s-label">Generated outputs</div>
+        <p>One agent's output becomes another's input. Derivative rights, attribution and commercial use are ambiguous — even for humans.</p>
+      </div>
+      <div class="scenario">
+        <div class="s-label">Composed workflows</div>
+        <p>Skills, plugins and capability registries multiply reuse. Permissions do not travel with the artefact. Verification does not compose.</p>
+      </div>
+    </div>
+
+    <div class="rails" aria-label="How rights are expressed today" style="margin-top: 40px;">
+      <div class="rail">
+        <div class="label">Today</div>
+        <p>Licenses are PDFs. Policies are fragmented. Permissions are human-readable. Machines cannot verify rights.</p>
+      </div>
+      <div class="rail">
+        <div class="label active">ProofMeta</div>
+        <p>Rights, scopes and usage policies expressed as signed, machine-readable primitives — verifiable before action.</p>
+      </div>
+    </div>
+
+    <p style="margin-top: 28px;" class="bright">The agentic era needs programmable rights infrastructure — the same way the web needed HTTP, not another storefront.</p>
+  </div>
+</section>
+
+<!-- 03 / Protocol · SDK · PANDR -->
+<section id="ecosystem">
+  <div class="wrap">
+    <div class="section-no">03 / PROTOCOL · SDK · PANDR</div>
+    <h2>Three layers. <span class="amber">One clear separation.</span></h2>
+    <p>ProofMeta is an open specification and reference implementation — not a hosted product, not a marketplace, not a take rate on your artefacts. Commercial applications built on the protocol are separate.</p>
+
+    <div class="ecosystem-grid" aria-label="ProofMeta ecosystem layers">
+      <div class="ecosystem">
+        <div class="e-tag">Open · Apache 2.0</div>
+        <h3>ProofMeta Protocol</h3>
+        <ul>
+          <li>Open specification and JSON schemas</li>
+          <li>Machine-readable rights primitives</li>
+          <li>Signed envelopes and verification flows</li>
+          <li>Status lifecycle: OPEN → PENDING → GRANTED | DENIED → REVOKED</li>
+          <li>Chain-agnostic, platform-agnostic architecture</li>
+        </ul>
+      </div>
+      <div class="ecosystem">
+        <div class="e-tag">Reference · npm</div>
+        <h3>SDK + CLI</h3>
+        <ul>
+          <li>TypeScript reference implementation</li>
+          <li>Create, sign and verify envelopes</li>
+          <li>License contract templates and scope tags</li>
+          <li>Validator CLI for any ProofMeta artifact</li>
+          <li><code>npm i @proofmeta/sdk-ts</code></li>
+        </ul>
+      </div>
+      <div class="ecosystem">
+        <div class="e-tag commercial">Commercial · separate</div>
+        <h3>
+          <a class="e-brand-link" href="https://pandr.de" target="_blank" rel="noopener">
+            <img class="e-logo" src="assets/pandr-logo.png" alt="" width="28" height="28" aria-hidden="true">
+            <span>Pandr</span>
+          </a>
+        </h3>
+        <ul>
+          <li>Commercial applications on the protocol</li>
+          <li>AI rights analysis and policy tooling</li>
+          <li>Governance and operational workflows</li>
+          <li>Enterprise implementation support</li>
+          <li>Not required to use the protocol · <a href="https://pandr.de" target="_blank" rel="noopener">pandr.de →</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="margin-top: 28px;"><strong>The license is a pointer, not a contract.</strong> ProofMeta references terms, scopes and proof — it does not replace counsel. It makes permission computable for machines.</p>
+  </div>
+</section>
+
+<!-- 04 / Architecture -->
+<section id="architecture">
+  <div class="wrap">
+    <div class="section-no">04 / ARCHITECTURE</div>
+    <h2>Signed envelopes. <span class="amber">Verifiable by design.</span></h2>
+    <p>Every ProofMeta artifact is a signed envelope: who wrote it, what exactly was written, when, and in what order. Agents verify before they act — no bare JSON, no implied consent.</p>
+
+    <div class="components-grid">
+      <div class="component">
+        <div class="c-no">PRIMITIVE <span class="status-badge spec">SHIPPED</span></div>
+        <h3>Signed Envelopes</h3>
+        <p>ed25519 signatures, DID identity (<code>did:key</code>), JCS canonical hashing. Cryptographic foundation for every protocol message.</p>
+      </div>
+      <div class="component">
+        <div class="c-no">SEMANTICS <span class="status-badge spec">SHIPPED</span></div>
+        <h3>License Contracts</h3>
+        <p>Chain-agnostic license semantics. Scope tags, pricing models, ready-made templates. One JSON object per permission surface.</p>
+      </div>
+      <div class="component">
+        <div class="c-no">TOOLING <span class="status-badge spec">SHIPPED</span></div>
+        <h3>TypeScript SDK + CLI</h3>
+        <p>Create envelopes, sign, verify, chain. Validate any ProofMeta artifact from your terminal.</p>
+      </div>
+      <div class="component">
+        <div class="c-no">EXTENSION <span class="status-badge spec">PLANNED</span></div>
+        <h3>Pluggable Resolvers</h3>
+        <p>Payment, delivery and anchoring are plug-in concerns — not protocol requirements. Pick your stack; permission logic stays portable.</p>
+      </div>
+    </div>
+
+    <div class="rails" aria-label="What each infrastructure layer answers" style="margin-top: 40px;">
       <div class="rail">
         <div class="label">Payments</div>
-        <p>Was value exchanged?</p>
+        <p>Was value exchanged? (external resolver)</p>
       </div>
       <div class="rail">
         <div class="label">Identity</div>
-        <p>Who acted?</p>
+        <p>Who acted? (DID + signature)</p>
       </div>
       <div class="rail">
         <div class="label active">ProofMeta</div>
         <p>Was it allowed — under which terms, with what proof?</p>
       </div>
     </div>
-
-    <div class="framing-lines">
-      <blockquote>The agentic web does not only need payment rails. It needs permission rails.</blockquote>
-      <blockquote>Payments answer: was value exchanged? Identity answers: who acted? ProofMeta answers: was it allowed?</blockquote>
-      <blockquote>Humans can interpret rights. Agents need them expressed.</blockquote>
-    </div>
   </div>
 </section>
 
-<!-- 03 / What ProofMeta Is -->
-<section id="protocol">
-  <div class="wrap">
-    <div class="section-no">03 / WHAT PROOFMETA IS</div>
-    <h2>A protocol primitive for digital artefacts — <span class="amber">not a platform.</span></h2>
-    <p>ProofMeta is an open specification for wrapping digital artefacts in machine-readable permission metadata. Skills are the first use case — not the category. The same primitive applies to datasets, APIs, code, documents, media, model outputs and agent capabilities.</p>
-    <p><strong>The license is a pointer, not a contract.</strong> It references terms, scopes and proof — it does not replace counsel. ProofMeta does not replace legal agreements. It makes permission computable.</p>
-    <p class="bright">Open. Neutral. No lock-in. No marketplace dependency. No platform capture. Builder-native infrastructure — not a storefront.</p>
-
-    <div class="components-grid">
-      <div class="component">
-        <div class="c-no">LAYER 01 <span class="status-badge spec">SHIPPED</span></div>
-        <h3>Primitive Core</h3>
-        <p>Signed envelopes, DID identity, ed25519 signatures, JCS hashing, status lifecycle. Cryptographic foundation. TypeScript SDK + CLI on npm.</p>
-      </div>
-      <div class="component">
-        <div class="c-no">LAYER 02 <span class="status-badge spec">SHIPPED</span></div>
-        <h3>License Contracts</h3>
-        <p>Chain-agnostic license semantics. Scope tags, pricing models, ready-made templates. One JSON object per permission surface.</p>
-      </div>
-      <div class="component">
-        <div class="c-no">LAYER 03 <span class="status-badge spec">SHIPPED</span></div>
-        <h3>SDK + CLI</h3>
-        <p>Create envelopes, sign, verify, chain. Validate any ProofMeta artifact from your terminal. <code>npm i @proofmeta/sdk-ts</code></p>
-      </div>
-      <div class="component">
-        <div class="c-no">LAYER 04 <span class="status-badge spec">PLANNED</span></div>
-        <h3>Execution Layer</h3>
-        <p>Pluggable resolvers for payment, delivery and anchoring. Pick your stack — the permission logic stays portable.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 04 / How The Lifecycle Works -->
+<!-- 05 / Lifecycle -->
 <section id="lifecycle">
   <div class="wrap">
-    <div class="section-no">04 / HOW THE LIFECYCLE WORKS</div>
+    <div class="section-no">05 / LIFECYCLE</div>
     <h2>Discover. Request. Decide. <span class="amber">Act with proof.</span></h2>
-    <p>An agent or app discovers permission metadata attached to an artefact, requests access, receives a machine-readable grant or denial, and acts only inside the terms — with an auditable trail.</p>
+    <p>An agent discovers permission metadata attached to an artefact, requests access, receives a machine-readable grant or denial, and acts only inside the terms — with an auditable trail.</p>
 
 <pre class="code" aria-label="Example permission object"><span class="c">// Permission metadata — pointer to terms, not the contract itself</span>
 {
-  <span class="k">"artefact"</span>:   <span class="s">"urn:proofmeta:skill:onboarding-flow"</span>,
-  <span class="k">"scope"</span>:      [<span class="s">"execute"</span>, <span class="s">"derivative-allowed"</span>, <span class="s">"training-excluded"</span>],
-  <span class="k">"terms_url"</span>:  <span class="s">"https://example.com/terms/onboarding-flow"</span>,
+  <span class="k">"artefact"</span>:   <span class="s">"urn:proofmeta:dataset:training-corpus-v2"</span>,
+  <span class="k">"scope"</span>:      [<span class="s">"inference-allowed"</span>, <span class="s">"training-excluded"</span>, <span class="s">"commercial-use"</span>],
+  <span class="k">"terms_url"</span>:  <span class="s">"https://example.com/terms/corpus-v2"</span>,
   <span class="k">"terms_hash"</span>: <span class="s">"sha256:a1b2c3..."</span>,
   <span class="k">"proof"</span>:      { <span class="k">"envelope_id"</span>: <span class="s">"env_..."</span>, <span class="k">"status"</span>: <span class="s">"GRANTED"</span> }
 }</pre>
@@ -591,15 +715,14 @@
   </div>
 </section>
 
-<!-- 05 / What It Can Wrap -->
+<!-- 06 / Artefact Types -->
 <section id="artefacts">
   <div class="wrap">
-    <div class="section-no">05 / WHAT IT CAN WRAP</div>
-    <h2>One permission primitive. <span class="amber">Many artefact types.</span></h2>
-    <p>ProofMeta does not assume a single content type. Any digital artefact an agent might discover, compose, remix or execute can carry the same permission envelope.</p>
+    <div class="section-no">06 / ARTEFACT TYPES</div>
+    <h2>One permission primitive. <span class="amber">Any digital artefact.</span></h2>
+    <p>ProofMeta does not assume a single content type. Any resource an agent might discover, compose or execute can carry the same signed permission envelope — datasets, APIs, code, documents, media, model outputs and agent capabilities.</p>
 
     <div class="artefact-grid" role="list">
-      <div class="artefact" role="listitem">Skills<span>Agent workflows, prompt packs, orchestration kits</span></div>
       <div class="artefact" role="listitem">Datasets<span>Training data, corpora, labelled collections</span></div>
       <div class="artefact" role="listitem">APIs<span>Endpoints, tools, callable capabilities</span></div>
       <div class="artefact" role="listitem">Code<span>Repos, modules, generated snippets</span></div>
@@ -607,37 +730,8 @@
       <div class="artefact" role="listitem">Media<span>Audio, video, images, creative assets</span></div>
       <div class="artefact" role="listitem">Model outputs<span>Generations, embeddings, derivatives</span></div>
       <div class="artefact" role="listitem">Agent capabilities<span>Registered tools, composable functions</span></div>
+      <div class="artefact" role="listitem">Workflows<span>Prompt chains, orchestration kits, skills</span></div>
     </div>
-  </div>
-</section>
-
-<!-- 06 / First Use Case: Skills -->
-<section id="skills">
-  <div class="wrap">
-    <div class="section-no">06 / FIRST USE CASE: SKILLS</div>
-    <h2>Skills are the first case, <span class="amber">not the only one.</span></h2>
-    <p>Reusable agent skills are already shipped in public — often without machine-readable terms. They are a sharp proof point: high reuse, high ambiguity, high risk when agents compose them at scale.</p>
-    <p class="bright">The hours went in. The revenue never did.</p>
-    <p>That line is not the whole story. It is one builder outcome when permission metadata is missing — stars instead of terms, reuse without proof, margin somewhere else.</p>
-
-    <div class="ledger" role="table" aria-label="Illustrative skills ledger">
-      <div class="head" role="row">
-        <span>Skill</span><span>Where it lives</span><span>Uses</span><span>Terms</span>
-      </div>
-      <div class="row" role="row">
-        <span>onboarding-flow.md</span><span>GitHub</span><span>2,341</span><span class="zero">none</span>
-      </div>
-      <div class="row" role="row">
-        <span>agent-orchestration</span><span>plugin directory</span><span>1,502</span><span class="zero">none</span>
-      </div>
-      <div class="row" role="row">
-        <span>prompt-chain-kit</span><span>public repo</span><span>4,721</span><span class="zero">none</span>
-      </div>
-      <div class="totals" role="row">
-        <span>TOTAL</span><span></span><span>8,564</span><span class="zero">0 wrapped</span>
-      </div>
-    </div>
-    <div class="ledger-caption">// illustrative — permission metadata, not monetization hype</div>
   </div>
 </section>
 
@@ -645,18 +739,18 @@
 <section id="builders">
   <div class="wrap">
     <div class="section-no">07 / FOR BUILDERS</div>
-    <h2>Open infrastructure for people shipping on the agentic web.</h2>
+    <h2>Open infrastructure for the agentic era.</h2>
     <p>ProofMeta is written in public under Apache 2.0. Implement without permission. Fork without capture. No vendor account. No marketplace listing required.</p>
-    <p>I'm Daud — in software since the late 1990s, most of the last decade on licensing and IP. ProofMeta compounds that work into the era where agents, not lawyers, need to parse what is allowed.</p>
+    <p>I'm Daud — in software since the late 1990s, most of the last decade on licensing and IP. ProofMeta compounds that work into infrastructure for an era where agents, not lawyers, need to parse what is allowed.</p>
 
     <div class="proof">
       <div class="card">
-        <h3>Protocol, not SaaS</h3>
-        <p>A spec and reference implementations — not a hosted product with a take rate.</p>
+        <h3>Specification, not SaaS</h3>
+        <p>An open spec and reference implementations — not a hosted product with a take rate.</p>
       </div>
       <div class="card">
         <h3>Neutral by design</h3>
-        <p>Chain-agnostic. Platform-agnostic. If a platform adopts it, builders keep portability.</p>
+        <p>Chain-agnostic. Platform-agnostic. Policy interoperability without platform capture.</p>
       </div>
       <div class="card">
         <h3>Pointer, not contract</h3>
@@ -669,9 +763,9 @@
     </div>
 
     <details class="obj" style="margin-top:36px;">
-      <summary><span>"Is this only about monetizing skills?"</span></summary>
+      <summary><span>"Is this a product, SDK, marketplace or specification?"</span></summary>
       <div class="body">
-        <p>No. Skills are the first visible use case because they are already agent-consumed at scale. ProofMeta is a permission primitive for any digital artefact — free, paid, or internal.</p>
+        <p>The protocol and schemas are the specification — open, Apache 2.0. The TypeScript SDK and CLI are the reference implementation. PANDR builds commercial applications on top. There is no marketplace and no requirement to use any commercial layer.</p>
       </div>
     </details>
     <details class="obj">
@@ -683,7 +777,13 @@
     <details class="obj">
       <summary><span>"Which runtimes can use this?"</span></summary>
       <div class="body">
-        <p>Any runtime that can fetch JSON or YAML and verify signatures. SDKs are convenience — not a lock-in layer.</p>
+        <p>Any runtime that can fetch JSON and verify signatures. SDKs are convenience — not a lock-in layer.</p>
+      </div>
+    </details>
+    <details class="obj">
+      <summary><span>"Why now?"</span></summary>
+      <div class="body">
+        <p>Agents are already composing tools, datasets and outputs at scale. Rights metadata has not kept pace. Without machine-readable licensing, every autonomous workflow is a liability waiting to be discovered — not because agents are malicious, but because permissions were never designed for them.</p>
       </div>
     </details>
   </div>
@@ -693,8 +793,8 @@
 <section class="final" id="spec">
   <div class="wrap">
     <div class="section-no">08 / READ THE SPEC</div>
-    <h2>Implement the permission layer. <span class="amber">No waitlist.</span></h2>
-    <p>The spec is Apache 2.0 and open for implementation. Clone it. Run the demo. Wrap your first artefact.</p>
+    <h2>Implement the rights layer. <span class="amber">No waitlist.</span></h2>
+    <p>The specification is Apache 2.0 and open for implementation. Clone it. Run the demo. Attach permission metadata to your first artefact.</p>
 
 <pre class="code"><span class="c"># 1. read the spec</span>
 <span class="k">$</span> git clone <span class="s">https://github.com/bettabeta/proofmeta-primitive-core</span>
@@ -712,26 +812,29 @@
       <a class="btn ghost" href="https://github.com/bettabeta/proofmeta-license-contracts" target="_blank" rel="noopener">License Contracts →</a>
     </div>
 
-    <div class="builder-thread-embed" id="builder-thread-embed">
-      <div id="mlb2-185530176070747374" class="ml-form-embedContainer ml-form-embedContainer-default ml-form-loading"></div>
+    <div class="builder-thread-embed ml-form-loading" id="builder-thread-embed">
+      <div id="mlb2-185530176070747374" class="ml-form-embedContainer ml-form-embedContainer-default"></div>
       <p class="builder-thread-status" id="builder-thread-status" hidden aria-live="polite"></p>
       <p class="hint">Low-volume updates as the spec moves. Nothing else. Unsubscribe in one click.</p>
     </div>
 
+    <script src="mailerlite.config.js"></script>
     <script>
       (function (w, d, e, u, f, l, n) {
         w[f] = w[f] || function () { (w[f].q = w[f].q || []).push(arguments); };
         l = d.createElement(e); l.async = 1; l.src = u;
         n = d.getElementsByTagName(e)[0]; n.parentNode.insertBefore(l, n);
       })(window, document, 'script', 'https://assets.mailerlite.com/js/universal.js', 'ml');
-      ml('account', '2287781');
-      ml('forms', '185530176070747374');
+      ml('account', (window.PROOFMETA_MAILERLITE && window.PROOFMETA_MAILERLITE.accountId) || '2287781');
+      ml('forms', (window.PROOFMETA_MAILERLITE && window.PROOFMETA_MAILERLITE.formId) || '185530176070747374');
     </script>
     <script>
       (function () {
-        var FORM_ID = '185530176070747374';
+        var cfg = window.PROOFMETA_MAILERLITE || {};
+        var FORM_ID = cfg.formId || '185530176070747374';
         var wrap = document.getElementById('builder-thread-embed');
         var status = document.getElementById('builder-thread-status');
+        var successMessage = '✓ You\'re on the thread. Check your inbox — confirm the email and you\'re set.';
 
         function showStatus(message, type) {
           if (!status) return;
@@ -744,11 +847,10 @@
           if (!event.data || typeof event.data !== 'string') return;
           if (event.data.indexOf('mlWebformSubmitSuccess-' + FORM_ID) === 0) {
             if (wrap) wrap.classList.remove('ml-form-loading');
-            showStatus('✓ You\'re on the thread. Check your inbox — confirm the email and you\'re set.', 'success');
+            showStatus(successMessage, 'success');
           }
         });
 
-        /* Style injected fields once MailerLite renders the embed */
         var observer = new MutationObserver(function () {
           if (!wrap) return;
           wrap.classList.remove('ml-form-loading');
@@ -765,6 +867,12 @@
         if (container) {
           observer.observe(container, { childList: true, subtree: true });
         }
+
+        window.setTimeout(function () {
+          if (!wrap || wrap.querySelector('input[type="email"]')) return;
+          wrap.classList.remove('ml-form-loading');
+          showStatus('Signup form failed to load — check MailerLite form settings.', 'error');
+        }, 10000);
       })();
     </script>
   </div>
@@ -773,7 +881,7 @@
 <footer>
   <div class="wrap">
     <span>Pandr UG · Solmsstraße 38, 10961 Berlin</span>
-    <span>Apache 2.0 · chain-agnostic · permission rails</span>
+    <span>Apache 2.0 · chain-agnostic · open protocol</span>
   </div>
 </footer>
 
