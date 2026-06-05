@@ -607,7 +607,7 @@
           <li>Open specification and JSON schemas</li>
           <li>Machine-readable rights primitives</li>
           <li>Signed envelopes and verification flows</li>
-          <li>Status lifecycle: OPEN → PENDING → GRANTED | DENIED → REVOKED</li>
+          <li>Status lifecycle: OPEN → PENDING → GRANTED | DENIED → SUSPENDED → REVOKED</li>
           <li>Chain-agnostic, platform-agnostic architecture</li>
         </ul>
       </div>
@@ -715,10 +715,14 @@
       <span class="state s-granted">GRANTED</span>
       <span class="arrow">|</span>
       <span class="state s-denied">DENIED</span>
+      <span class="arrow">·</span>
+      <span class="state">SUSPENDED</span>
+      <span class="arrow">⇄</span>
+      <span class="state s-granted">GRANTED</span>
       <span class="arrow">→</span>
       <span class="state s-revoked">REVOKED</span>
     </div>
-    <p style="font-size:12px; margin-top:0;">Every state is machine-readable. Every transition is auditable. Revocation is expressible — not implied.</p>
+    <p style="font-size:12px; margin-top:0;">Every state is machine-readable. SUSPENDED is temporary and reinstatable; REVOKED is permanent. Expiry is derived from <code>valid_until</code>, not a stored status.</p>
   </div>
 </section>
 

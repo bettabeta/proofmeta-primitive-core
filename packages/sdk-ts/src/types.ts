@@ -15,6 +15,7 @@ export type ProofMetaStatus =
   | "PENDING"
   | "GRANTED"
   | "DENIED"
+  | "SUSPENDED"
   | "REVOKED";
 
 export type Sha256Ref = `sha256:${string}`;
@@ -119,13 +120,21 @@ export interface LicenseRequestPayload extends PayloadBase {
   status: "OPEN";
 }
 
-// ── Status Update (PENDING / GRANTED / DENIED / REVOKED) ──────────────────
+// ── Status Update (PENDING / GRANTED / DENIED / SUSPENDED / REVOKED) ───────
 
 export interface StatusUpdatePayload extends PayloadBase {
   type: "status.update";
   request_id: string;
   status: Exclude<ProofMetaStatus, "OPEN">;
+  /** Required on SUSPENDED and REVOKED transitions. */
+  reason?: string;
+  /** Optional context; commonly used on reinstatement (SUSPENDED → GRANTED). */
   note?: string;
+  /**
+   * Optional signed expiry bound on GRANTED. "Expired" is derived at read time
+   * from this field — it is not a stored lifecycle status.
+   */
+  valid_until?: string;
   delivery?: {
     method?: string;
     url?: string;

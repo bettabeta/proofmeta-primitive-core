@@ -32,7 +32,9 @@ ProofMeta is a **protocol**, not a platform. It defines what agents say to each 
 
 ```
 OPEN → PENDING → GRANTED | DENIED
+                 GRANTED → SUSPENDED → GRANTED (reinstate)
                  GRANTED → REVOKED (optional)
+                 SUSPENDED → REVOKED (escalate)
 ```
 
 ## Quick Start
@@ -93,7 +95,7 @@ v1 is a working vertical slice, not a wishlist. A Provider can stand up, a Consu
 
 - [x] Manifest spec (`payload.manifest.schema.json`)
 - [x] License-request + status-update spec (`payload.license-request.schema.json`, `payload.status-update.schema.json`)
-- [x] Status lifecycle: `OPEN → PENDING → GRANTED | DENIED → REVOKED`
+- [x] Status lifecycle: `OPEN → PENDING → GRANTED | DENIED → SUSPENDED → REVOKED`
 - [x] TypeScript SDK (`@proofmeta/sdk-ts`) — ed25519 signing, JCS hashing, envelope + chain verification
 - [x] Reference resolver interface + free-license implementation (`@proofmeta/resolvers`)
 - [x] Demo Provider and Consumer agents (`examples/provider`, `examples/consumer`)

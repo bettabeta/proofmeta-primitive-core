@@ -252,7 +252,9 @@ This is the heart of ProofMeta. Every license request moves through exactly thes
 
 ```
 OPEN → PENDING → GRANTED | DENIED
-                 GRANTED → REVOKED (optional)
+                 GRANTED → SUSPENDED → GRANTED (reinstate)
+                 GRANTED → REVOKED (optional, direct)
+                 SUSPENDED → REVOKED (escalate to permanent)
 ```
 
 | Status | Meaning | Who sets it |
@@ -261,13 +263,31 @@ OPEN → PENDING → GRANTED | DENIED
 | `PENDING` | A Resolver is processing (e.g., payment is in progress) | Resolver or Provider |
 | `GRANTED` | License is active. Consumer can use the item | Provider Agent (after Resolver confirms) |
 | `DENIED` | Request was rejected (payment failed, terms violated, etc.) | Provider Agent or Resolver |
-| `REVOKED` | A previously granted license has been withdrawn | Provider Agent |
+| `SUSPENDED` | A granted license is temporarily paused; reinstatable to `GRANTED` | Provider Agent |
+| `REVOKED` | A previously granted license has been permanently withdrawn; terminal | Provider Agent |
+
+**Allowed transitions (all others MUST be rejected):**
+
+| From | To |
+|------|-----|
+| `OPEN` | `PENDING` |
+| `PENDING` | `GRANTED`, `DENIED` |
+| `GRANTED` | `SUSPENDED`, `REVOKED` |
+| `SUSPENDED` | `GRANTED`, `REVOKED` |
+
+`DENIED` and `REVOKED` are terminal — no further transitions.
+
+**SUSPENDED vs REVOKED:** Both mean "not currently active," but they are not interchangeable. `SUSPENDED` is temporary and reinstatable; `REVOKED` is permanent and for-cause. This distinction MUST live in the signed protocol state — not as an app-side flag on top of `REVOKED`. An auditor verifies what is cryptographically signed.
 
 **Each state transition is its own Signed Envelope.** `PENDING.in_reply_to == OPEN.payload_hash`. `GRANTED.in_reply_to == PENDING.payload_hash`. The chain of envelopes *is* the proof of the lifecycle.
 
 **There is no separate "status response" schema.** Status is expressed entirely through the envelope chain. A Consumer that wants the current status calls `GET {request_endpoint}/{request_id}` and receives either the latest envelope or the full chain (Provider's choice; the Provider MAY support both via `?full=true`). The latest envelope's `payload.status` field is the authoritative status; the chain is the authoritative history. Anything else would be a second source of truth, and the protocol refuses to own two sources of truth for the same fact.
 
-**ProofMeta does not care *why* a status changes.** It only records *that* it changed, *when*, and *who* changed it. The reason is metadata attached by the actor who made the change.
+**Transition metadata:** `SUSPENDED` and `REVOKED` envelopes MUST carry a `reason` field. `SUSPENDED → GRANTED` (reinstatement) MAY carry an optional `note`. Reinstatability is implied by state — do not add a separate boolean.
+
+**Expiry is not a stored status.** A grant MAY include an optional signed `valid_until` timestamp on a `GRANTED` envelope. Whether a license is expired is **derived at read time** from that field (and the chain history). There is no `EXPIRED` lifecycle state and no transition that issues one.
+
+**Current validity:** A license is currently valid only when the latest status is `GRANTED` and `valid_until` (if present) has not passed. `SUSPENDED`, `REVOKED`, `DENIED`, `PENDING`, and `OPEN` are not currently valid — but prior `GRANTED` periods remain provable in the signed chain for validity-over-time reconstruction.
 
 ### 3.5 Anchors (Optional External Witnesses)
 
@@ -553,7 +573,7 @@ This is the most important architectural boundary.
 | **Envelope Spec** | The JSON schema for Signed Envelopes, including canonical serialization rules |
 | **Manifest Spec** | The envelope-wrapped manifest at `/.well-known/proofmeta.json` |
 | **Request/Status Spec** | Envelope schemas for license requests, status updates, reviews |
-| **Status Lifecycle** | The state machine (OPEN → PENDING → GRANTED/DENIED → REVOKED) and the valid `in_reply_to` transitions |
+| **Status Lifecycle** | The state machine (OPEN → PENDING → GRANTED/DENIED/SUSPENDED → REVOKED) and the valid `in_reply_to` transitions |
 | **Anchor Interface** | The shape of the `anchors` array — not the anchor types themselves |
 | **Discovery Spec** | The Well-Known URL convention (`/.well-known/proofmeta.json`). Nothing else. |
 | **Catalog Query Spec** | The four standard query parameters (`q`, `license_type`, `limit`, `offset`) and the response format. See §3.8. |
@@ -674,7 +694,8 @@ Everything is a Signed Envelope — no bare JSON ever.
 payload_hash MUST be sha256 over JCS (RFC 8785) canonical form of payload. Never roll your own canonicalization.
 author MUST be a DID. v1 only guarantees verification of did:key with ed25519. Do not implement did:web or other DID methods without an explicit spec update.
 Discovery in v1 is a single HTTPS GET to a Manifest URL (typically /.well-known/proofmeta.json). Do not build, assume, or depend on a registry.
-The status lifecycle (OPEN → PENDING → GRANTED/DENIED → REVOKED) is sacred.
+The status lifecycle (OPEN → PENDING → GRANTED/DENIED/SUSPENDED → REVOKED) is sacred.
+SUSPENDED is temporary and reinstatable; REVOKED is permanent and terminal — never conflate them in app-layer flags.
 in_reply_to chains envelopes within a single request lifecycle — it is NOT a blockchain.
 Anchors are optional, pluggable, and never required by the protocol.
 Never hardcode a payment provider, storage backend, chain, or anchor type.

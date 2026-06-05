@@ -33,7 +33,7 @@ envelope.schema.json  ──  payload ────┬──  payload.manifest.sc
 | `envelope.schema.json` | Outer wrapper — required for every artifact. Defines `proofmeta`, `payload`, `payload_hash`, `author`, `signature`, `timestamp`, optional `in_reply_to`, `anchors`. |
 | `payload.manifest.schema.json` | Provider License Manifest payload (published at `/.well-known/proofmeta.json`). |
 | `payload.license-request.schema.json` | Consumer-signed OPEN envelope that starts a license lifecycle. |
-| `payload.status-update.schema.json` | PENDING / GRANTED / DENIED / REVOKED envelopes signed by Provider (or Resolver, for PENDING). |
+| `payload.status-update.schema.json` | PENDING / GRANTED / DENIED / SUSPENDED / REVOKED envelopes signed by Provider (or Resolver, for PENDING). |
 
 ## Validation procedure
 

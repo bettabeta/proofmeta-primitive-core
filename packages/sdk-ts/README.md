@@ -37,7 +37,7 @@ const envelope = await createEnvelope({
 const v = await verifyEnvelope(envelope);
 // → { ok: true } or { ok: false, reason: "..." }
 
-// Verify a lifecycle chain (OPEN → PENDING → GRANTED/DENIED ...)
+// Verify a lifecycle chain (OPEN → PENDING → GRANTED/DENIED/SUSPENDED …)
 const c = await verifyChain([open, pending, granted]);
 ```
 
@@ -49,7 +49,7 @@ const c = await verifyChain([open, pending, granted]);
 2. `payload_hash === sha256(JCS(payload))` — recomputed from scratch, not trusted from the envelope.
 3. `signature` is a valid ed25519 signature over the `payload_hash` string.
 
-`verifyChain` additionally checks that every `in_reply_to` matches the prior envelope's `payload_hash`, the root has no `in_reply_to`, and all `request_id`s in the chain agree.
+`verifyChain` additionally checks that every `in_reply_to` matches the prior envelope's `payload_hash`, the root has no `in_reply_to`, all `request_id`s in the chain agree, and status transitions follow the allowed lifecycle (including `SUSPENDED` / reinstatement). Use `isCurrentlyValid(chain)` for read-time validity; expiry is derived from optional `valid_until` on `GRANTED` envelopes, not a stored status.
 
 ## Canonicalization
 

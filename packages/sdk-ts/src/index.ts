@@ -26,3 +26,19 @@ export {
   type VerifyOptions,
   type VerifyResult,
 } from "./envelope.js";
+export {
+  ALLOWED_TRANSITIONS,
+  PROOFMETA_STATUSES,
+  REASON_REQUIRED_STATUSES,
+  TERMINAL_STATUSES,
+  canTransition,
+  getCurrentStatus,
+  getValidityIntervals,
+  isCurrentlyValid,
+  statusFromEnvelope,
+  validateStatusTransitions,
+  validateTransition,
+  validUntilFromEnvelope,
+  type TransitionResult,
+  type ValidityInterval,
+} from "./lifecycle.js";

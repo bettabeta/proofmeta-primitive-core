@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://proofmeta.org/schemas/v1/payload.status-update.json",
   "title": "ProofMeta Status Update Payload",
-  "description": "Payload schema for PENDING / GRANTED / DENIED / REVOKED envelopes. The outer envelope MUST validate against envelope.schema.json, and its in_reply_to MUST point at the payload_hash of the previous envelope in the same lifecycle. See PROOFMETA_ANWEISUNG.md §3.4.",
+  "description": "Payload schema for PENDING / GRANTED / DENIED / SUSPENDED / REVOKED envelopes. The outer envelope MUST validate against envelope.schema.json, and its in_reply_to MUST point at the payload_hash of the previous envelope in the same lifecycle. See PROOFMETA_ANWEISUNG.md §3.4.",
   "type": "object",
   "required": ["type", "request_id", "status"],
   "additionalProperties": true,
@@ -18,11 +18,21 @@
     },
     "status": {
       "type": "string",
-      "enum": ["PENDING", "GRANTED", "DENIED", "REVOKED"]
+      "enum": ["PENDING", "GRANTED", "DENIED", "SUSPENDED", "REVOKED"]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Required on SUSPENDED and REVOKED transitions. Human-readable cause for auditors."
     },
     "note": {
       "type": "string",
-      "description": "Optional human-readable context for the state transition."
+      "description": "Optional human-readable context for the state transition (e.g. reinstatement note)."
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional signed expiry bound on GRANTED. Expiry is derived at read time from this field — not a stored lifecycle status."
     },
     "delivery": {
       "type": "object",

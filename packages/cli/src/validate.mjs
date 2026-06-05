@@ -11,6 +11,7 @@
  *     kind: "envelope" | "chain",
  *     envelopes: Array<EnvelopeReport>,
  *     chain?: { ok: boolean, reason?: string },
+ *     transitions?: { ok: boolean, reason?: string },
  *   }
  *
  * Each envelope report:
@@ -38,6 +39,7 @@ import {
   hashesEqual,
   verifyEnvelope,
   verifyChain,
+  validateStatusTransitions,
 } from "@proofmeta/sdk-ts";
 
 // Prepare a single Ajv instance with all known payload schemas compiled once.
@@ -165,7 +167,9 @@ export async function validateInput(input) {
     } else {
       const c = await verifyChain(envelopes);
       report.chain = c.ok ? { ok: true } : { ok: false, reason: c.reason };
-      if (!report.chain.ok) report.ok = false;
+      const t = validateStatusTransitions(envelopes);
+      report.transitions = t.ok ? { ok: true } : { ok: false, reason: t.reason };
+      if (!report.chain.ok || !report.transitions.ok) report.ok = false;
     }
   }
 
@@ -197,6 +201,13 @@ export function formatReport(report, filename) {
     lines.push(`  ${mark(report.chain.ok)} chain integrity`);
     if (!report.chain.ok && report.chain.reason) {
       lines.push(`        · ${report.chain.reason}`);
+    }
+  }
+
+  if (report.transitions) {
+    lines.push(`  ${mark(report.transitions.ok)} status transitions`);
+    if (!report.transitions.ok && report.transitions.reason) {
+      lines.push(`        · ${report.transitions.reason}`);
     }
   }
 

@@ -3,5 +3,5 @@
 - Single source of truth: `PROOFMETA_ANWEISUNG.md`. Do not contradict it; propose edits there first.
 - Protocol only: no mandatory payment, storage, or chain in core code paths.
 - Canonical schemas: `packages/spec/*.schema.json` (draft-07).
-- Status values are only: OPEN, PENDING, GRANTED, DENIED, REVOKED.
+- Status values are only: OPEN, PENDING, GRANTED, DENIED, SUSPENDED, REVOKED.
 - Prefer small, spec-driven changes; Apache-2.0 applies to this repo.

@@ -17,6 +17,7 @@ import * as ed25519 from "@noble/ed25519";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { decodeDidKey, isDidKeyEd25519 } from "./did-key.js";
 import { hashPayload, hashesEqual } from "./hash.js";
+import { validateStatusTransitions } from "./lifecycle.js";
 import {
   PROOFMETA_PROTOCOL_VERSION,
   type AnyPayload,
@@ -213,6 +214,7 @@ export async function updateStatus<B extends PayloadBase & { request_id: string 
  *   - Each subsequent envelope's in_reply_to equals the previous one's
  *     payload_hash.
  *   - All envelopes share the same payload.request_id (if applicable).
+ *   - Status transitions follow the allowed lifecycle (including SUSPENDED).
  */
 export async function verifyChain(
   envelopes: Envelope<AnyPayload>[],
@@ -263,6 +265,9 @@ export async function verifyChain(
 
     prevHash = env.payload_hash;
   }
+
+  const transitions = validateStatusTransitions(envelopes);
+  if (!transitions.ok) return transitions;
 
   return { ok: true };
 }
