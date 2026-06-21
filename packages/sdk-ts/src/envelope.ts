@@ -17,7 +17,11 @@ import * as ed25519 from "@noble/ed25519";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { decodeDidKey, isDidKeyEd25519 } from "./did-key.js";
 import { hashPayload, hashesEqual } from "./hash.js";
-import { validateStatusTransitions } from "./lifecycle.js";
+import {
+  isAttestationEnvelope,
+  validateAttestationChain,
+  validateStatusTransitions,
+} from "./lifecycle.js";
 import {
   PROOFMETA_PROTOCOL_VERSION,
   type AnyPayload,
@@ -204,6 +208,65 @@ export async function updateStatus<B extends PayloadBase & { request_id: string 
   });
 }
 
+// ── Attestations (root status — policy/governance verdicts) ────────────────
+
+/**
+ * Build and sign a ROOT ATTESTATION: a standalone status.update that asserts a
+ * verdict about `subject` against `policy`, with no prior license.request.
+ *
+ * Unlike {@link updateStatus}, this is an envelope root — it carries no
+ * `request_id` and no `in_reply_to`. The verdict reuses the status vocabulary
+ * (GRANTED = compliant/permitted, DENIED = non-compliant, SUSPENDED =
+ * quarantined, REVOKED = must be removed). The asserting authority signs with
+ * its own key. See §3.4 Mode B and docs/attestation-extension-proposal.md.
+ *
+ * Note: attestation *history chains* (re-evaluations linked via in_reply_to)
+ * are not yet validated by verifyChain — single attestations verify via
+ * verifyEnvelope today.
+ */
+export async function createAttestation(
+  args: {
+    subject: StatusUpdatePayload["subject"];
+    policy: StatusUpdatePayload["policy"];
+    status: Exclude<ProofMetaStatus, "OPEN">;
+    author: Did;
+    privateKey: Uint8Array;
+    timestamp?: string;
+    /**
+     * payload_hash of the previous attestation about the SAME subject. Omit for
+     * the first verdict (an envelope root); set on re-evaluations to build a
+     * signed verdict history. See validateAttestationChain.
+     */
+    in_reply_to?: Sha256Ref;
+    extras?: StatusUpdateExtras;
+  },
+): Promise<Envelope<StatusUpdatePayload>> {
+  const {
+    subject,
+    policy,
+    status,
+    author,
+    privateKey,
+    timestamp,
+    in_reply_to,
+    extras = {},
+  } = args;
+  const payload: StatusUpdatePayload = {
+    type: "status.update",
+    subject,
+    policy,
+    status,
+    ...extras,
+  };
+  return createEnvelope<StatusUpdatePayload>({
+    payload,
+    author,
+    privateKey,
+    ...(timestamp !== undefined ? { timestamp } : {}),
+    ...(in_reply_to !== undefined ? { in_reply_to } : {}),
+  });
+}
+
 // ── Chain verification ───────────────────────────────────────────────────
 
 /**
@@ -266,8 +329,13 @@ export async function verifyChain(
     prevHash = env.payload_hash;
   }
 
-  const transitions = validateStatusTransitions(envelopes);
-  if (!transitions.ok) return transitions;
+  // Two chain kinds share the same cryptographic linking above, but have
+  // different semantics: a license lifecycle (rooted at a license.request) vs.
+  // an attestation history (rooted at a root attestation). Route accordingly.
+  const semantics = isAttestationEnvelope(envelopes[0]!)
+    ? validateAttestationChain(envelopes)
+    : validateStatusTransitions(envelopes);
+  if (!semantics.ok) return semantics;
 
   return { ok: true };
 }
