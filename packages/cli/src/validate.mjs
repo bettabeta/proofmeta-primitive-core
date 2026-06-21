@@ -40,6 +40,8 @@ import {
   verifyEnvelope,
   verifyChain,
   validateStatusTransitions,
+  validateAttestationChain,
+  isAttestationEnvelope,
 } from "@proofmeta/sdk-ts";
 
 // Prepare a single Ajv instance with all known payload schemas compiled once.
@@ -167,7 +169,12 @@ export async function validateInput(input) {
     } else {
       const c = await verifyChain(envelopes);
       report.chain = c.ok ? { ok: true } : { ok: false, reason: c.reason };
-      const t = validateStatusTransitions(envelopes);
+      // Route the transitions check by chain kind, mirroring verifyChain: an
+      // attestation-rooted chain uses the free-transition / constant-subject
+      // rules; a license-rooted chain uses the lifecycle transition rules.
+      const t = isAttestationEnvelope(envelopes[0])
+        ? validateAttestationChain(envelopes)
+        : validateStatusTransitions(envelopes);
       report.transitions = t.ok ? { ok: true } : { ok: false, reason: t.reason };
       if (!report.chain.ok || !report.transitions.ok) report.ok = false;
     }
