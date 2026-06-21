@@ -19,6 +19,7 @@ export { generateKeyPair, keyPairFromPrivate, type KeyPair } from "./keys.js";
 export {
   createEnvelope,
   updateStatus,
+  createAttestation,
   verifyEnvelope,
   verifyChain,
   type CreateEnvelopeOptions,

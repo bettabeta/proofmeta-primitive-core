@@ -122,9 +122,36 @@ export interface LicenseRequestPayload extends PayloadBase {
 
 // ── Status Update (PENDING / GRANTED / DENIED / SUSPENDED / REVOKED) ───────
 
+/** Subject of a root attestation — what is being judged. See §3.4 Mode B. */
+export interface AttestationSubject {
+  id: string;
+  /** Optional sha256 binding the verdict to a specific observed state. */
+  content_hash?: Sha256Ref;
+  /** Optional environment/host the subject was observed in. */
+  host?: string;
+  [k: string]: unknown;
+}
+
+/** The rulebook a root attestation was made against. See §3.4 Mode B. */
+export interface AttestationPolicy {
+  /** URL and/or sha256 reference to the policy/rulebook applied. */
+  ref: string;
+  /** Conditions applied, using the scope vocabulary (core tags or extension URLs). */
+  scope?: string[];
+  [k: string]: unknown;
+}
+
 export interface StatusUpdatePayload extends PayloadBase {
   type: "status.update";
-  request_id: string;
+  /**
+   * Mode A (chained verdict): present, matches the OPEN request_id. Mutually
+   * exclusive with subject/policy — a payload carries one or the other.
+   */
+  request_id?: string;
+  /** Mode B (root attestation): what is being judged. */
+  subject?: AttestationSubject;
+  /** Mode B (root attestation): the rulebook applied. */
+  policy?: AttestationPolicy;
   status: Exclude<ProofMetaStatus, "OPEN">;
   /** Required on SUSPENDED and REVOKED transitions. */
   reason?: string;

@@ -2,10 +2,20 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://proofmeta.org/schemas/v1/payload.status-update.json",
   "title": "ProofMeta Status Update Payload",
-  "description": "Payload schema for PENDING / GRANTED / DENIED / SUSPENDED / REVOKED envelopes. The outer envelope MUST validate against envelope.schema.json, and its in_reply_to MUST point at the payload_hash of the previous envelope in the same lifecycle. See PROOFMETA_ANWEISUNG.md §3.4.",
+  "description": "Payload schema for PENDING / GRANTED / DENIED / SUSPENDED / REVOKED envelopes. A status.update has exactly one of two modes (see `oneOf`): (A) a CHAINED VERDICT in a license lifecycle — carries `request_id`, and the outer envelope's in_reply_to MUST point at the previous envelope's payload_hash; or (B) a ROOT ATTESTATION — a standalone, signed policy/governance verdict that carries `subject` + `policy` and no `request_id`, with no prior request required. The first attestation about a subject is an envelope root (no in_reply_to). See PROOFMETA_ANWEISUNG.md §3.4 and docs/attestation-extension-proposal.md.",
   "type": "object",
-  "required": ["type", "request_id", "status"],
+  "required": ["type", "status"],
   "additionalProperties": true,
+  "oneOf": [
+    {
+      "title": "Mode A — chained verdict (license lifecycle)",
+      "required": ["request_id"]
+    },
+    {
+      "title": "Mode B — root attestation (policy/governance verdict)",
+      "required": ["subject", "policy"]
+    }
+  ],
   "properties": {
     "type": {
       "type": "string",
@@ -14,7 +24,47 @@
     "request_id": {
       "type": "string",
       "minLength": 1,
-      "description": "Must match the OPEN envelope's request_id."
+      "description": "Mode A only. Must match the OPEN envelope's request_id. Mutually exclusive with `subject`/`policy` (enforced by oneOf)."
+    },
+    "subject": {
+      "type": "object",
+      "description": "Mode B only. What is being judged by this attestation (e.g. an observed AI tool, asset, or action).",
+      "required": ["id"],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable identifier of the subject under judgement."
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Optional sha256 binding the verdict to a specific observed state of the subject."
+        },
+        "host": {
+          "type": "string",
+          "description": "Optional environment/host the subject was observed in."
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "description": "Mode B only. The rulebook this verdict was made against.",
+      "required": ["ref"],
+      "additionalProperties": true,
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "URL and/or sha256 reference to the policy/rulebook applied."
+        },
+        "scope": {
+          "type": "array",
+          "description": "Conditions applied, using the scope vocabulary (core tags or extension URLs — see docs/scope-vocabulary.md).",
+          "items": { "type": "string" }
+        }
+      }
     },
     "status": {
       "type": "string",
