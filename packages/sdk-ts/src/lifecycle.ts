@@ -156,6 +156,106 @@ export function validateStatusTransitions(
   return { ok: true };
 }
 
+// ── Attestation chains (policy/governance verdict history) ─────────────────
+
+/**
+ * Whether an envelope is a ROOT ATTESTATION status.update (Mode B): a
+ * status.update carrying `subject` and no `request_id`. See §3.4.
+ */
+export function isAttestationEnvelope(envelope: Envelope<AnyPayload>): boolean {
+  const p = envelope.payload as {
+    type?: string;
+    subject?: unknown;
+    request_id?: unknown;
+  };
+  return (
+    p.type === "status.update" &&
+    p.subject !== undefined &&
+    p.request_id === undefined
+  );
+}
+
+/**
+ * Validate an attestation history chain — re-evaluations of the same subject
+ * over time, linked via in_reply_to (cryptographic linking is checked by
+ * verifyChain; this validates the governance semantics).
+ *
+ * Unlike a license lifecycle, governance verdicts are NOT a one-way street:
+ * a subject may move freely between GRANTED / DENIED / SUSPENDED / REVOKED as
+ * re-scans find it compliant or not. There are therefore no illegal
+ * transitions and no terminal states. The invariants are:
+ *   - every envelope is a status.update attestation (subject, no request_id);
+ *   - the subject.id is constant across the whole chain;
+ *   - each status is a valid (non-OPEN) verdict;
+ *   - SUSPENDED / REVOKED carry a reason (same as licensing).
+ *
+ * Deliberately NOT enforced here (tracked as open audit questions, see
+ * docs/attestation-extension-proposal.md §11): policy-version constancy,
+ * observation-gap / continuity proof, and trustworthy (anchored) timestamps.
+ */
+export function validateAttestationChain(
+  envelopes: Envelope<AnyPayload>[],
+): TransitionResult {
+  if (envelopes.length === 0) {
+    return { ok: false, reason: "empty chain" };
+  }
+
+  let subjectId: string | undefined;
+
+  for (let i = 0; i < envelopes.length; i++) {
+    const env = envelopes[i]!;
+    if (!isAttestationEnvelope(env)) {
+      return {
+        ok: false,
+        reason: `envelope[${i}]: attestation chain must contain only root-attestation status.update envelopes (subject, no request_id)`,
+      };
+    }
+
+    const p = env.payload as {
+      subject?: { id?: unknown };
+      status?: unknown;
+      reason?: unknown;
+    };
+
+    const id = p.subject?.id;
+    if (typeof id !== "string" || id.length === 0) {
+      return { ok: false, reason: `envelope[${i}]: missing subject.id` };
+    }
+    if (i === 0) {
+      subjectId = id;
+    } else if (id !== subjectId) {
+      return {
+        ok: false,
+        reason: `envelope[${i}]: subject.id changed across chain (${id} vs ${subjectId})`,
+      };
+    }
+
+    const status = p.status;
+    if (
+      typeof status !== "string" ||
+      status === "OPEN" ||
+      !PROOFMETA_STATUSES.includes(status as ProofMetaStatus)
+    ) {
+      return {
+        ok: false,
+        reason: `envelope[${i}]: invalid attestation status ${String(status)}`,
+      };
+    }
+
+    if (REASON_REQUIRED_STATUSES.includes(status as ProofMetaStatus)) {
+      const reason = p.reason;
+      if (typeof reason !== "string" || reason.trim().length === 0) {
+        return {
+          ok: false,
+          reason: `envelope[${i}]: status ${status} requires a non-empty reason field`,
+        };
+      }
+    }
+  }
+
+  return { ok: true };
+}
+
 /** Latest lifecycle status, or undefined if the chain has no license root. */
 export function getCurrentStatus(
   envelopes: Envelope<AnyPayload>[],

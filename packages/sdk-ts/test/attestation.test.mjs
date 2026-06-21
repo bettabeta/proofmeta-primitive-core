@@ -8,8 +8,31 @@ import {
   generateKeyPair,
   createAttestation,
   verifyEnvelope,
+  verifyChain,
   statusFromEnvelope,
+  validateAttestationChain,
 } from "../dist/index.js";
+
+// Build a signed re-evaluation history for one subject: each verdict links to
+// the previous via in_reply_to.
+async function attestationHistory(authority, subject, policy, statuses) {
+  const chain = [];
+  let prev;
+  for (const s of statuses) {
+    const env = await createAttestation({
+      subject,
+      policy,
+      status: s.status,
+      author: authority.did,
+      privateKey: authority.privateKey,
+      ...(prev ? { in_reply_to: prev.payload_hash } : {}),
+      ...(s.reason ? { extras: { reason: s.reason } } : {}),
+    });
+    chain.push(env);
+    prev = env;
+  }
+  return chain;
+}
 
 test("createAttestation builds a signed root status with subject + policy", async () => {
   const authority = await generateKeyPair();
@@ -52,4 +75,79 @@ test("attestation signature is bound to its payload (tamper detection)", async (
   const tampered = { ...att, payload: { ...att.payload, status: "DENIED" } };
   const v = await verifyEnvelope(tampered);
   assert.equal(v.ok, false);
+});
+
+// ── Attestation history chains (Phase 2) ───────────────────────────────────
+
+test("verifyChain accepts a free-flowing verdict history (GRANTED → DENIED → GRANTED)", async () => {
+  const authority = await generateKeyPair();
+  const subject = { id: "claude-code@host-42" };
+  const policy = { ref: "https://pandr.de/policy/eu-only" };
+
+  const chain = await attestationHistory(authority, subject, policy, [
+    { status: "GRANTED" },
+    { status: "DENIED", reason: "egress to US endpoint" },
+    { status: "GRANTED" },
+  ]);
+
+  const v = await verifyChain(chain);
+  assert.equal(v.ok, true, v.ok ? "" : v.reason);
+});
+
+test("verifyChain detects a broken in_reply_to link in a verdict history", async () => {
+  const authority = await generateKeyPair();
+  const subject = { id: "cursor@host-7" };
+  const policy = { ref: "https://pandr.de/policy/no-shell-exec" };
+
+  const chain = await attestationHistory(authority, subject, policy, [
+    { status: "GRANTED" },
+    { status: "SUSPENDED", reason: "under review" },
+  ]);
+  // Corrupt the link of the second verdict.
+  chain[1] = { ...chain[1], in_reply_to: "sha256:" + "0".repeat(64) };
+
+  const v = await verifyChain(chain);
+  assert.equal(v.ok, false);
+});
+
+test("verifyChain rejects a history where the subject changes mid-chain", async () => {
+  const authority = await generateKeyPair();
+  const policy = { ref: "https://pandr.de/policy/eu-only" };
+
+  const a = await createAttestation({
+    subject: { id: "claude-code@host-42" },
+    policy,
+    status: "GRANTED",
+    author: authority.did,
+    privateKey: authority.privateKey,
+  });
+  const b = await createAttestation({
+    subject: { id: "DIFFERENT-tool@host-99" },
+    policy,
+    status: "DENIED",
+    author: authority.did,
+    privateKey: authority.privateKey,
+    in_reply_to: a.payload_hash,
+    extras: { reason: "switched subject" },
+  });
+
+  const v = await verifyChain([a, b]);
+  assert.equal(v.ok, false, "subject must be constant across an attestation chain");
+});
+
+test("validateAttestationChain rejects mixing a licensing verdict into an attestation chain", async () => {
+  const authority = await generateKeyPair();
+  const att = await createAttestation({
+    subject: { id: "claude-code@host-42" },
+    policy: { ref: "https://pandr.de/policy/eu-only" },
+    status: "GRANTED",
+    author: authority.did,
+    privateKey: authority.privateKey,
+  });
+  // A Mode-A style status.update (request_id) does not belong in this chain.
+  const licensing = {
+    payload: { type: "status.update", request_id: "01JZ", status: "GRANTED" },
+  };
+  const r = validateAttestationChain([att, licensing]);
+  assert.equal(r.ok, false);
 });

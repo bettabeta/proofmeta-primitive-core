@@ -17,7 +17,11 @@ import * as ed25519 from "@noble/ed25519";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { decodeDidKey, isDidKeyEd25519 } from "./did-key.js";
 import { hashPayload, hashesEqual } from "./hash.js";
-import { validateStatusTransitions } from "./lifecycle.js";
+import {
+  isAttestationEnvelope,
+  validateAttestationChain,
+  validateStatusTransitions,
+} from "./lifecycle.js";
 import {
   PROOFMETA_PROTOCOL_VERSION,
   type AnyPayload,
@@ -228,11 +232,25 @@ export async function createAttestation(
     author: Did;
     privateKey: Uint8Array;
     timestamp?: string;
+    /**
+     * payload_hash of the previous attestation about the SAME subject. Omit for
+     * the first verdict (an envelope root); set on re-evaluations to build a
+     * signed verdict history. See validateAttestationChain.
+     */
+    in_reply_to?: Sha256Ref;
     extras?: StatusUpdateExtras;
   },
 ): Promise<Envelope<StatusUpdatePayload>> {
-  const { subject, policy, status, author, privateKey, timestamp, extras = {} } =
-    args;
+  const {
+    subject,
+    policy,
+    status,
+    author,
+    privateKey,
+    timestamp,
+    in_reply_to,
+    extras = {},
+  } = args;
   const payload: StatusUpdatePayload = {
     type: "status.update",
     subject,
@@ -245,6 +263,7 @@ export async function createAttestation(
     author,
     privateKey,
     ...(timestamp !== undefined ? { timestamp } : {}),
+    ...(in_reply_to !== undefined ? { in_reply_to } : {}),
   });
 }
 
@@ -310,8 +329,13 @@ export async function verifyChain(
     prevHash = env.payload_hash;
   }
 
-  const transitions = validateStatusTransitions(envelopes);
-  if (!transitions.ok) return transitions;
+  // Two chain kinds share the same cryptographic linking above, but have
+  // different semantics: a license lifecycle (rooted at a license.request) vs.
+  // an attestation history (rooted at a root attestation). Route accordingly.
+  const semantics = isAttestationEnvelope(envelopes[0]!)
+    ? validateAttestationChain(envelopes)
+    : validateStatusTransitions(envelopes);
+  if (!semantics.ok) return semantics;
 
   return { ok: true };
 }

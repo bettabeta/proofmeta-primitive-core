@@ -37,6 +37,8 @@ export {
   getValidityIntervals,
   isCurrentlyValid,
   statusFromEnvelope,
+  isAttestationEnvelope,
+  validateAttestationChain,
   validateStatusTransitions,
   validateTransition,
   validUntilFromEnvelope,

@@ -98,7 +98,7 @@ The normative core vocabulary is **not** extended.
 
 - **Phase 0 — done.** Capture the design (this document).
 - **Phase 1 — done (branch `feat/policy-attestations`).** `payload.status-update.schema.json` carries the `oneOf` (Mode A `request_id` / Mode B `subject`+`policy`); schema regression tests in `packages/cli/test/attestation-schema.test.mjs` prove backward-compat (Mode A still validates, NEITHER still rejected, BOTH rejected).
-- **Phase 2 — partial (branch).** SDK ships `createAttestation()` (additive) + types (`AttestationSubject`, `AttestationPolicy`; `request_id` now optional); single attestations create + verify via `verifyEnvelope`. **Not yet:** attestation *history chains* in `verifyChain`/`lifecycle.ts` (re-evaluations linked via `in_reply_to`) — `verifyChain` still validates licensing chains only.
+- **Phase 2 — done (branch).** SDK ships `createAttestation()` (additive, with optional `in_reply_to` for re-evaluations) + types (`AttestationSubject`, `AttestationPolicy`; `request_id` now optional). Attestation *history chains* are validated: `verifyChain` routes an attestation-rooted chain to the new `validateAttestationChain()` (and `isAttestationEnvelope()`), while a license-rooted chain still uses `validateStatusTransitions()` unchanged. Attestation chain semantics: free transitions (no illegal moves, no terminal states — a subject may flip compliant↔non-compliant over time), subject-id constant across the chain, reason required on SUSPENDED/REVOKED.
 - **Phase 3 — automatic.** CLI `validate` accepts attestations via the updated schema (single-envelope path: schema + hash + signature).
 - **Phase 4 — convergence (separate repo, agent-xray), not started.** Emit attestation envelopes; retire `evidence.py`'s redundant hash chain.
 - **Merge gate.** Hold on `main` until the scope freeze lifts; then review + merge `feat/policy-attestations`.
@@ -112,4 +112,14 @@ The normative core vocabulary is **not** extended.
 
 ## 10. Proposed §10 decision entry
 
-> **D14 — How standalone policy verdicts are expressed.** A `status.update` MAY be a **root attestation**: instead of `request_id` + `in_reply_to`, it carries `subject` + `policy` and is signed by the asserting authority. A `oneOf` in the status schema makes the two modes mutually exclusive, so existing licensing verdicts validate unchanged and the absence of `request_id` is only valid when `subject` + `policy` are present. The status enum and scope-URL mechanism (D11) are reused; no new payload type or core vocabulary. See §3.4 and `docs/attestation-extension-proposal.md`. *(Date: TBD on acceptance.)*
+> **D14 — How standalone policy verdicts are expressed.** A `status.update` MAY be a **root attestation**: instead of `request_id` + `in_reply_to`, it carries `subject` + `policy` and is signed by the asserting authority. A `oneOf` in the status schema makes the two modes mutually exclusive, so existing licensing verdicts validate unchanged and the absence of `request_id` is only valid when `subject` + `policy` are present. The status enum and scope-URL mechanism (D11) are reused; no new payload type or core vocabulary. Attestation history chains use free transitions (no terminal states) with a constant subject. See §3.4 and `docs/attestation-extension-proposal.md`. *(Date: TBD on acceptance.)*
+
+## 11. Open audit questions (NOT solved by chain verification)
+
+Chain verification proves the verdicts are **linked, signed, ordered, and about one subject**. That is the trust backbone — it is **not** the whole enterprise-audit story. Selling "compliance & audit" on top of this must not conflate "chain verified" with "audit complete." Three deeper questions remain explicitly open and are deliberately **not** enforced by `validateAttestationChain`:
+
+1. **Policy-version constancy.** A chain locks the subject, not the policy. If the rulebook changes mid-period, the chain does not record *which policy version applied when*. Auditors ask this. Options (future): require `policy.ref` to carry a version/hash and decide whether it may change across a chain, or branch the chain on policy change.
+2. **Observation-gap / continuity proof.** The chain shows a sequence of *verdicts*, not proof of *continuous observation*. It cannot answer "prove you were watching the whole time, not only when convenient." Needs signed heartbeat / no-change attestations plus an expected cadence — a separate mechanism.
+3. **Trustworthy timestamps.** Ordering comes from `in_reply_to`; the `timestamp` is self-asserted by the author. For audit, *when* matters, and self-asserted time is weak. This is Tier-3 anchor territory (RFC 3161, on-chain anchors via the existing optional `anchors` field) — not addressed by chain linking.
+
+These are tracked here so the gap is visible before the offering is positioned as audit-grade.
