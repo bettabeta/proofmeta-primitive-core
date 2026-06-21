@@ -12,7 +12,7 @@ extensions and resolvers, not new schemas (see [`../architecture.md`](../archite
 
 | Use case | Status | Primary primitive | What ProofMeta provides |
 |---|---|---|---|
-| [Raynet — Enterprise AI Asset Management](./raynet-enterprise-sam.md) | **Active** | Attestation (Mode B) | Machine-readable, signed governance & audit verdicts over discovered AI assets |
+| [Enterprise AI asset governance](./enterprise-ai-asset-governance.md) | **Active** | Attestation (Mode B) | Machine-readable, signed governance & audit verdicts over discovered AI assets |
 | Agentic commerce | Planned | License verdict + resolvers | Permission + payment for agent-to-agent skill/API use |
 | Skills monetization | Planned | License verdict + payment resolver | Paid, provable use of a skill/workflow |
 | Content / IP licensing | Planned | License verdict + attestation | Grant *and* prove rights; verify terms were honored |
