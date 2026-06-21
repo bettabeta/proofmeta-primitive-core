@@ -289,6 +289,19 @@ OPEN → PENDING → GRANTED | DENIED
 
 **Current validity:** A license is currently valid only when the latest status is `GRANTED` and `valid_until` (if present) has not passed. `SUSPENDED`, `REVOKED`, `DENIED`, `PENDING`, and `OPEN` are not currently valid — but prior `GRANTED` periods remain provable in the signed chain for validity-over-time reconstruction.
 
+#### 3.4.1 Two modes of a status: chained verdict and root attestation
+
+A `status.update` has exactly two modes (enforced by `oneOf` in the schema — see D14):
+
+- **Mode A — chained verdict (license lifecycle).** Carries `request_id` and the envelope's `in_reply_to` points at the previous envelope. This is everything described above — unchanged.
+- **Mode B — root attestation (policy / governance verdict).** A standalone, signed verdict that an authority asserts about a `subject` against a `policy`, with **no prior request**. It carries `subject` + `policy` (and no `request_id`); the first attestation about a subject is an envelope **root** (no `in_reply_to`).
+
+The two modes are mutually exclusive: a payload has `request_id` **or** `subject` + `policy`, never both and never neither. Existing licensing verdicts are unaffected.
+
+**Why this needs no new primitive.** A *policy* is just a rulebook (the same shape as a Manifest's terms); a *verdict* is just a status. ProofMeta already owns both. The only thing Mode B relaxes is the assumption that a status must follow a request. The status vocabulary is reused by analogy: `GRANTED` = compliant / permitted, `DENIED` = non-compliant, `SUSPENDED` = quarantined pending review, `REVOKED` = withdrawn / must be removed.
+
+**Attestation history chains.** Re-evaluations of the same subject link via `in_reply_to`, forming a signed, ordered verdict timeline. Unlike a license lifecycle, governance verdicts are not a one-way street — a subject may move freely between states over time (no illegal transitions, no terminal states). The invariants a verifier checks are: each envelope individually valid, the chain links unbroken, and **`subject.id` constant across the chain**. See `docs/attestation-extension-proposal.md` for the rationale and for three audit questions chain verification deliberately does **not** solve (policy-version constancy, observation-gap proof, anchored timestamps).
+
 ### 3.5 Anchors (Optional External Witnesses)
 
 An **anchor** is an optional, external reference attached to an envelope that provides third-party evidence of its existence. Anchors are pluggable — the protocol defines the interface, resolvers implement specific anchor types.
@@ -800,6 +813,7 @@ All v1 design questions have been resolved. New questions will be added here as 
 | D11 | Scope vocabulary for license terms | **Normative core vocabulary + URL extensions.** A small closed set of tags (`commercial`, `non-commercial`, `derivative-allowed`, `attribution-required`, `ai-training-allowed`, `ai-training-excluded`, `sublicense-allowed`, `revocable`) is normative so agents can filter reliably. Provider- or jurisdiction-specific tags appear as URLs (e.g. `https://beatvault.ai/scope/eu-only`). See `docs/scope-vocabulary.md`. | 2026-04-21 |
 | D12 | `anchors` field requirement on envelopes | **Optional, not required.** The `anchors` array MAY be omitted entirely for Tier-1 envelopes. When present, it MUST be a non-empty array of valid anchor entries. The field exists solely to serve Tier-3 use cases (chain PDAs, RFC 3161 timestamps, Arweave transactions); Tier-1 envelopes shouldn't carry empty-array noise in their canonical form. See §3.1, §3.5. | 2026-04-23 |
 | D13 | Byte-level integrity for licensed items | **Optional `content_hash` on catalog items, SHOULD for static content.** Manifests and catalog results MAY include `content_hash: sha256:<hex>` on each item. Providers of static content (files, datasets, skill packs) SHOULD include it so Consumers can verify bytes delivered via the GRANTED envelope match what was licensed. Dynamic items (services, APIs, streams) SHOULD omit it. A license GRANTED against an item without `content_hash` does not bind the licensee to any specific byte sequence. See §3.3, §3.8. | 2026-04-23 |
+| D14 | How standalone policy / governance verdicts are expressed | **Reuse `status.update` as a root attestation — no new payload type.** A `status.update` may be EITHER a chained licensing verdict (`request_id`) OR a root attestation carrying `subject` + `policy` and no `request_id`, signed by the asserting authority. A `oneOf` makes the two modes mutually exclusive, so existing licensing verdicts validate unchanged and a missing `request_id` is only valid when `subject` + `policy` are present. The status enum and scope-URL mechanism (D11) are reused; no core vocabulary change. Attestation history chains use free transitions (no terminal states) with a constant subject. See §3.4.1, `docs/scope-vocabulary.md`, `docs/attestation-extension-proposal.md`. | 2026-06-21 |
 
 ### Small Decisions (2026-04-21 cleanup)
 

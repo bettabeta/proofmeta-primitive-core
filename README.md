@@ -37,6 +37,15 @@ OPEN → PENDING → GRANTED | DENIED
                  SUSPENDED → REVOKED (escalate)
 ```
 
+## Two kinds of verdict: licenses and attestations
+
+The same signed status serves two uses (one primitive, one toolchain — see §3.4.1):
+
+- **License verdict** — a verdict *forward*, answering a request: "you asked to license this item → `GRANTED`."
+- **Attestation** — a standalone verdict an authority asserts about a `subject` against a `policy`, with **no prior request**: "this AI tool, against the EU policy → `DENIED`." Re-evaluations link into a signed, tamper-evident verdict history.
+
+This makes ProofMeta the permission *and* the proof layer: licensing says *you may*; attestations prove *the state / that the terms were honored*. Governance and compliance (e.g. enterprise AI asset management) use attestations; commercial licensing uses both.
+
 ## Quick Start
 
 A Provider Agent publishes a manifest at `/.well-known/proofmeta.json`. Every ProofMeta artifact is a **Signed Envelope** — the outer wrapper carries the author DID, the signature, and a hash of the payload. The manifest lives inside `payload`:

@@ -1,6 +1,6 @@
 # Proposal — Policy Attestations (rootable status)
 
-**Status:** Implemented on branch `feat/policy-attestations` (NOT merged to `main`). Held off `main` pending the active scope freeze (see [`MILESTONE-SCOPE-FREEZE.md`](./MILESTONE-SCOPE-FREEZE.md)). Full test suite green: licensing behaviour unchanged, backward-compat proven.
+**Status:** Accepted & merged to `main` (2026-06-21, via `feat/policy-attestations`; freeze window from `MILESTONE-SCOPE-FREEZE.md` has elapsed). Decision recorded as D14 in `PROOFMETA_ANWEISUNG.md` §10; spec text in §3.4.1. Full test suite green: licensing behaviour unchanged, backward-compat proven. Phases 1–3 done; Phase 4 (agent-xray emits attestations) is downstream in the agent-xray repo.
 **Date:** 2026-06-21
 **Owner:** Pandr UG / ProofMeta
 **Proposed decision entry:** D14 (see §10 of [`PROOFMETA_ANWEISUNG.md`](../PROOFMETA_ANWEISUNG.md))
