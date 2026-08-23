@@ -1,0 +1,17 @@
+{
+  "name": "ProofMeta",
+  "install": "npm ci && npm run build",
+  "terminals": [
+    {
+      "name": "provider",
+      "command": "PORT=4100 HOST=127.0.0.1 PUBLIC_ORIGIN=http://127.0.0.1:4100 node examples/provider/server.mjs",
+      "description": "Reference ProofMeta Provider Agent on http://127.0.0.1:4100 — serves the signed manifest at /.well-known/proofmeta.json and handles license requests. Run the consumer with PROVIDER_ORIGIN=http://127.0.0.1:4100 node examples/consumer/client.mjs, or `npm run e2e` for the full Tier-1 flow (spawns its own provider on 4101)."
+    }
+  ],
+  "ports": [
+    {
+      "name": "provider",
+      "port": 4100
+    }
+  ]
+}
