@@ -122,6 +122,18 @@ test("fails schema when required fields are missing", async () => {
   );
 });
 
+test("rejects an externally supplied empty anchors array", async () => {
+  const { env } = await validManifestEnvelope();
+  const broken = { ...env, anchors: [] };
+  const report = await validateInput(broken);
+  assert.equal(report.ok, false);
+  assert.equal(report.envelopes[0].schema.ok, false);
+  assert.ok(
+    report.envelopes[0].schema.errors.some((e) => /anchors|minItems|fewer than 1/.test(e)),
+    `expected an anchors minItems error, got: ${report.envelopes[0].schema.errors.join(" | ")}`,
+  );
+});
+
 test("fails payload schema for invalid manifest (no catalog_endpoint and no items)", async () => {
   const { env } = await validManifestEnvelope();
   // Build a structurally-valid envelope but mutate payload after the fact.

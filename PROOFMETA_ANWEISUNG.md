@@ -2,7 +2,7 @@
 
 > **What this document is:** The single source of truth for every AI agent, human developer, and tool (Claude Projects, Cursor, OpenClaw, etc.) working on ProofMeta. If it's not in this document, it's not decided yet.
 
-> **Last updated:** 2026-04-21 (D1–D7 locked 2026-04-16; D8–D11 + cleanup applied 2026-04-21; Validator CLI shipped 2026-04-21)
+> **Last updated:** 2026-09-01 (D1–D7 locked 2026-04-16; D8–D11 + cleanup applied 2026-04-21; D12–D13 locked 2026-04-23; D14 accepted and merged 2026-06-21; D15 locked 2026-09-01)
 
 ---
 
@@ -309,10 +309,10 @@ An **anchor** is an optional, external reference attached to an envelope that pr
 #### Three Trust Tiers Using the Same Envelope Format
 
 **Tier 1 — Pure Signature**
-`Envelope → signed → done.` Trust comes from author's key identity (DID, DNS, Reclaim). Good for free licenses, internal agent networks, low-stakes flows. `anchors: []`.
+`Envelope → signed → done.` Trust comes from author's key identity (DID, DNS, Reclaim). Good for free licenses, internal agent networks, low-stakes flows. The `anchors` field is omitted.
 
 **Tier 2 — Hash Chain (in_reply_to)**
-`OPEN → PENDING → GRANTED`, each envelope replies to the previous. Trust comes from signature + lifecycle order. Good for proof-of-use reviews, bilateral records between provider and consumer. `anchors: []` still possible.
+`OPEN → PENDING → GRANTED`, each envelope replies to the previous. Trust comes from signature + lifecycle order. Good for proof-of-use reviews, bilateral records between provider and consumer. The `anchors` field may still be omitted.
 
 **Tier 3 — External Anchor**
 Each envelope (or selected ones) additionally anchored to an external system — on-chain PDA, notary service, RFC 3161 timestamp, Arweave transaction. Trust comes from third-party witness. Good for high-stakes licenses, legal disputes, "this existed at time X and has not been altered since."
@@ -345,7 +345,7 @@ Each envelope (or selected ones) additionally anchored to an external system —
 #### What the Protocol Defines About Anchors
 
 - The **shape** of an anchor entry (`type` + `reference` + type-specific fields)
-- That `anchors` is an **array** (an envelope may have zero or many anchors)
+- That `anchors` is an **optional array**; when present, it MUST contain at least one anchor
 - That anchors are **additive evidence**, never required for signature/hash validity
 
 #### What the Protocol Does NOT Define
@@ -586,7 +586,7 @@ This is the most important architectural boundary.
 | **Envelope Spec** | The JSON schema for Signed Envelopes, including canonical serialization rules |
 | **Manifest Spec** | The envelope-wrapped manifest at `/.well-known/proofmeta.json` |
 | **Request/Status Spec** | Envelope schemas for license requests, status updates, reviews |
-| **Status Lifecycle** | The state machine (OPEN → PENDING → GRANTED/DENIED/SUSPENDED → REVOKED) and the valid `in_reply_to` transitions |
+| **Status Lifecycle** | The state machine (`OPEN → PENDING → {GRANTED | DENIED}`; `DENIED` terminal; `GRANTED → {SUSPENDED | REVOKED}`; `SUSPENDED → {GRANTED | REVOKED}`) and the valid `in_reply_to` transitions |
 | **Anchor Interface** | The shape of the `anchors` array — not the anchor types themselves |
 | **Discovery Spec** | The Well-Known URL convention (`/.well-known/proofmeta.json`). Nothing else. |
 | **Catalog Query Spec** | The four standard query parameters (`q`, `license_type`, `limit`, `offset`) and the response format. See §3.8. |
@@ -707,7 +707,7 @@ Everything is a Signed Envelope — no bare JSON ever.
 payload_hash MUST be sha256 over JCS (RFC 8785) canonical form of payload. Never roll your own canonicalization.
 author MUST be a DID. v1 only guarantees verification of did:key with ed25519. Do not implement did:web or other DID methods without an explicit spec update.
 Discovery in v1 is a single HTTPS GET to a Manifest URL (typically /.well-known/proofmeta.json). Do not build, assume, or depend on a registry.
-The status lifecycle (OPEN → PENDING → GRANTED/DENIED/SUSPENDED → REVOKED) is sacred.
+The status lifecycle is sacred: `OPEN → PENDING → {GRANTED | DENIED}`; `DENIED` is terminal; `GRANTED → {SUSPENDED | REVOKED}`; `SUSPENDED → {GRANTED | REVOKED}`; `REVOKED` is terminal.
 SUSPENDED is temporary and reinstatable; REVOKED is permanent and terminal — never conflate them in app-layer flags.
 in_reply_to chains envelopes within a single request lifecycle — it is NOT a blockchain.
 Anchors are optional, pluggable, and never required by the protocol.
@@ -767,28 +767,33 @@ Read PROOFMETA_ANWEISUNG.md. Then scaffold the repo:
 - [ ] One payment resolver (Stripe or x402-SVM)
 - [ ] One anchor resolver (Solana PDA) as proof the interface works
 - [ ] Demo showing Tier 3 flow (signature + in_reply_to + Solana anchor)
-- [ ] ERC-7521 wrapping interface (informed by real resolver experience)
+- [ ] Resolver-informed requirements for a future ERC-7521 wrapping interface (formal interface deferred to v2 under D6)
 
 ### Explicitly NOT in scope for v1
 - ERC-7521 formal wrapping spec (deferred to v2, §5 remains as orientation)
 - Requiring on-chain for any core flow (Tier 3 must remain opt-in)
 - Agent registry / discovery network — v1 uses direct URLs
 - Complex rights management — v1 uses simple scope arrays
-- Payment splitting / royalties — v1 handles single-party payments
+- Payment splitting / royalties — not part of v1; the v1.1 payment-resolver target covers only a single-party paid flow
 - UI / dashboard — v1 is API-only
 
 ---
 
 ## 9. Success Criteria
 
-ProofMeta v1 is done when:
+### ProofMeta v1 is done when
 
-1. **A developer can make their agent a Provider in under 10 minutes** — generate a key, publish a signed manifest, respond to request envelopes with signed status envelopes
-2. **A developer can make their agent a Consumer in under 10 minutes** — discover a Provider, send a signed request, verify returned status envelopes
-3. **A free license flow works end-to-end with zero external dependencies** — no blockchain, no payment, no anchor. Just two agents, signatures, and the protocol.
-4. **A paid license flow works end-to-end with one Resolver** — e.g., Stripe Checkout as payment resolver
-5. **A Tier 3 flow works with one anchor resolver** — e.g., Solana PDA — proving the anchor interface is real and pluggable
-6. **The spec is small enough to fit in a single AI context window** — if an agent can't understand the full protocol in one prompt, it's too complex
+1. A first-time developer can make an agent a Provider in under 10 minutes; a recorded clean-checkout run documents prerequisites, start/end time, commands, and result.
+2. A first-time developer can make an agent a Consumer in under 10 minutes under the same evidence standard.
+3. A free Tier-1 license flow works end-to-end with zero payment, blockchain, or anchor dependency, and the resulting envelope chain validates independently.
+4. The released v1 specification is published at the canonical spec domain; GitHub remains the development repository.
+5. The specification remains small enough to fit in one AI context window.
+
+### ProofMeta v1.1 is done when
+
+1. One paid license flow works end-to-end through one payment resolver.
+2. One optional Tier-3 flow works end-to-end through one anchor resolver.
+3. Resolver-informed requirements for an ERC-7521 wrapping interface are documented; the formal wrapping specification remains deferred to v2 under D6.
 
 ---
 
@@ -814,6 +819,7 @@ All v1 design questions have been resolved. New questions will be added here as 
 | D12 | `anchors` field requirement on envelopes | **Optional, not required.** The `anchors` array MAY be omitted entirely for Tier-1 envelopes. When present, it MUST be a non-empty array of valid anchor entries. The field exists solely to serve Tier-3 use cases (chain PDAs, RFC 3161 timestamps, Arweave transactions); Tier-1 envelopes shouldn't carry empty-array noise in their canonical form. See §3.1, §3.5. | 2026-04-23 |
 | D13 | Byte-level integrity for licensed items | **Optional `content_hash` on catalog items, SHOULD for static content.** Manifests and catalog results MAY include `content_hash: sha256:<hex>` on each item. Providers of static content (files, datasets, skill packs) SHOULD include it so Consumers can verify bytes delivered via the GRANTED envelope match what was licensed. Dynamic items (services, APIs, streams) SHOULD omit it. A license GRANTED against an item without `content_hash` does not bind the licensee to any specific byte sequence. See §3.3, §3.8. | 2026-04-23 |
 | D14 | How standalone policy / governance verdicts are expressed | **Reuse `status.update` as a root attestation — no new payload type.** A `status.update` may be EITHER a chained licensing verdict (`request_id`) OR a root attestation carrying `subject` + `policy` and no `request_id`, signed by the asserting authority. A `oneOf` makes the two modes mutually exclusive, so existing licensing verdicts validate unchanged and a missing `request_id` is only valid when `subject` + `policy` are present. The status enum and scope-URL mechanism (D11) are reused; no core vocabulary change. Attestation history chains use free transitions (no terminal states) with a constant subject. See §3.4.1, `docs/scope-vocabulary.md`, `docs/attestation-extension-proposal.md`. | 2026-06-21 |
+| D15 | Which capabilities define the v1 release boundary? | **v1 is the smallest useful protocol release: the free Tier-1 vertical flow with no payment, blockchain, or anchor dependency.** Payment resolver, anchor resolver, and the Tier-3 demo are v1.1 scope. Implementation checkboxes do not by themselves prove release acceptance; v1 still requires the recorded Provider/Consumer setup benchmarks and publication at the canonical spec domain. | 2026-09-01 |
 
 ### Small Decisions (2026-04-21 cleanup)
 

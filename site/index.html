@@ -4,7 +4,7 @@
 <!--
   ProofMeta Protocol — homepage (v3)
   Positioning: open infrastructure for machine-readable licensing (agentic era)
-  - GitHub: https://github.com/bettabeta/proofmeta-primitive-core
+  - GitHub: https://github.com/bettabeta/proofmeta
   -         https://github.com/bettabeta/proofmeta-license-contracts
   - MailerLite embed: account 2287781 / formId in mailerlite.config.js
 -->
@@ -598,6 +598,7 @@
     <div class="section-no">03 / PROTOCOL · SDK · PANDR</div>
     <h2>Three layers. <span class="amber">One clear separation.</span></h2>
     <p>ProofMeta is an open specification and reference implementation — not a hosted product, not a marketplace, not a take rate on your artefacts. Commercial applications built on the protocol are separate.</p>
+    <p><strong>Status: v1 draft.</strong> The Tier-1 reference flow and npm packages (0.2.0) work today; this is not yet a tagged v1 release.</p>
 
     <div class="ecosystem-grid" aria-label="ProofMeta ecosystem layers">
       <div class="ecosystem">
@@ -607,19 +608,19 @@
           <li>Open specification and JSON schemas</li>
           <li>Machine-readable rights primitives</li>
           <li>Signed envelopes and verification flows</li>
-          <li>Status lifecycle: OPEN → PENDING → GRANTED | DENIED → SUSPENDED → REVOKED</li>
+          <li>Status lifecycle: OPEN → PENDING → GRANTED or terminal DENIED; GRANTED can be suspended or revoked, and SUSPENDED can be reinstated or revoked</li>
           <li>Chain-agnostic, platform-agnostic architecture</li>
         </ul>
       </div>
       <div class="ecosystem">
-        <div class="e-tag">Reference · npm</div>
+        <div class="e-tag">Published · npm · 0.2.0</div>
         <h3>SDK + CLI</h3>
         <ul>
           <li>TypeScript reference implementation</li>
           <li>Create, sign and verify envelopes</li>
           <li>License contract templates and scope tags</li>
           <li>Validator CLI for any ProofMeta artifact</li>
-          <li><code>npm i @proofmeta/sdk-ts</code></li>
+          <li><code>npm install @proofmeta/sdk-ts@0.2.0</code></li>
         </ul>
       </div>
       <div class="ecosystem">
@@ -653,24 +654,24 @@
 
     <div class="components-grid">
       <div class="component">
-        <div class="c-no">PRIMITIVE <span class="status-badge spec">SHIPPED</span></div>
+        <div class="c-no">PRIMITIVE <span class="status-badge spec">IMPLEMENTED · v1 DRAFT</span></div>
         <h3>Signed Envelopes</h3>
         <p>ed25519 signatures, DID identity (<code>did:key</code>), JCS canonical hashing. Cryptographic foundation for every protocol message.</p>
       </div>
       <div class="component">
-        <div class="c-no">SEMANTICS <span class="status-badge spec">SHIPPED</span></div>
+        <div class="c-no">SEMANTICS <span class="status-badge spec">SEPARATE ADD-ON</span></div>
         <h3>License Contracts</h3>
         <p>Chain-agnostic license semantics. Scope tags, pricing models, ready-made templates. One JSON object per permission surface.</p>
       </div>
       <div class="component">
-        <div class="c-no">TOOLING <span class="status-badge spec">SHIPPED</span></div>
+        <div class="c-no">TOOLING <span class="status-badge spec">PUBLISHED · npm 0.2.0</span></div>
         <h3>TypeScript SDK + CLI</h3>
         <p>Create envelopes, sign, verify, chain. Validate any ProofMeta artifact from your terminal.</p>
       </div>
       <div class="component">
-        <div class="c-no">EXTENSION <span class="status-badge spec">PLANNED</span></div>
+        <div class="c-no">EXTENSIONS <span class="status-badge spec">FREE RESOLVER IMPLEMENTED</span></div>
         <h3>Pluggable Resolvers</h3>
-        <p>Payment, delivery and anchoring are plug-in concerns — not protocol requirements. Pick your stack; permission logic stays portable.</p>
+        <p>The no-op free resolver is implemented for Tier 1. Payment, delivery and anchor resolver implementations remain planned and optional.</p>
       </div>
     </div>
 
@@ -707,21 +708,14 @@
   <span class="k">"proof"</span>:      { <span class="k">"envelope_id"</span>: <span class="s">"env_..."</span>, <span class="k">"status"</span>: <span class="s">"GRANTED"</span> }
 }</pre>
 
-    <div class="lifecycle" aria-label="Permission lifecycle states">
-      <span class="state s-open">OPEN</span>
-      <span class="arrow">→</span>
-      <span class="state">PENDING</span>
-      <span class="arrow">→</span>
-      <span class="state s-granted">GRANTED</span>
-      <span class="arrow">|</span>
-      <span class="state s-denied">DENIED</span>
-      <span class="arrow">·</span>
-      <span class="state">SUSPENDED</span>
-      <span class="arrow">⇄</span>
-      <span class="state s-granted">GRANTED</span>
-      <span class="arrow">→</span>
-      <span class="state s-revoked">REVOKED</span>
-    </div>
+    <figure style="margin:0;">
+      <figcaption style="font-size:12px; margin-bottom:8px;">Allowed license lifecycle transitions</figcaption>
+      <pre class="code">OPEN → PENDING → GRANTED
+          └────→ DENIED (terminal)
+GRANTED → SUSPENDED → GRANTED (reinstate)
+GRANTED → REVOKED (terminal)
+SUSPENDED → REVOKED (terminal)</pre>
+    </figure>
     <p style="font-size:12px; margin-top:0;">Every state is machine-readable. SUSPENDED is temporary and reinstatable; REVOKED is permanent. Expiry is derived from <code>valid_until</code>, not a stored status.</p>
   </div>
 </section>
@@ -768,8 +762,8 @@
         <p>Machine-readable permission metadata references legal terms — it does not replace them.</p>
       </div>
       <div class="card">
-        <h3>Pre-launch, honest</h3>
-        <p>No fake testimonials. No inflated claims. The spec is live; implementations are early.</p>
+        <h3>v1 draft, honest</h3>
+        <p>No fake testimonials. No inflated claims. The Tier-1 reference flow and npm packages 0.2.0 work today; the tagged v1 release and its remaining acceptance evidence are still open.</p>
       </div>
     </div>
 
@@ -808,10 +802,10 @@
     <p>The specification is Apache 2.0 and open for implementation. Clone it. Run the demo. Attach permission metadata to your first artefact.</p>
 
 <pre class="code"><span class="c"># 1. read the spec</span>
-<span class="k">$</span> git clone <span class="s">https://github.com/bettabeta/proofmeta-primitive-core</span>
+<span class="k">$</span> git clone <span class="s">https://github.com/bettabeta/proofmeta</span>
 
 <span class="c"># 2. install the SDK + run the end-to-end demo</span>
-<span class="k">$</span> cd proofmeta-primitive-core <span class="s">&&</span> npm install <span class="s">&&</span> npm run e2e
+<span class="k">$</span> cd proofmeta <span class="s">&amp;&amp;</span> npm install <span class="s">&amp;&amp;</span> npm run e2e
 
 <span class="c"># 3. browse license templates</span>
 <span class="k">$</span> git clone <span class="s">https://github.com/bettabeta/proofmeta-license-contracts</span>
@@ -819,7 +813,7 @@
 <span class="c"># 4. wrap an artefact — see examples/ for starting points</span></pre>
 
     <div class="cta-row">
-      <a class="btn" href="https://github.com/bettabeta/proofmeta-primitive-core" target="_blank" rel="noopener">Primitive Core →</a>
+      <a class="btn" href="https://github.com/bettabeta/proofmeta" target="_blank" rel="noopener">ProofMeta repository →</a>
       <a class="btn ghost" href="https://github.com/bettabeta/proofmeta-license-contracts" target="_blank" rel="noopener">License Contracts →</a>
     </div>
 
