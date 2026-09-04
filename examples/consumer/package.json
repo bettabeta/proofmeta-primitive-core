@@ -1,6 +1,6 @@
 {
   "name": "@proofmeta/example-consumer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Reference ProofMeta Consumer Agent — fetches a signed Manifest, verifies it, submits a signed OPEN envelope, and verifies the returned lifecycle chain.",
   "license": "Apache-2.0",
@@ -10,6 +10,6 @@
     "start": "node client.mjs"
   },
   "dependencies": {
-    "@proofmeta/sdk-ts": "*"
+    "@proofmeta/sdk-ts": "^0.3.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@proofmeta/resolver-free",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "ProofMeta reference resolver: no-op 'free' payment resolver. Instantly confirms; carries no external dependencies. Used for Tier-1 flows and integration tests.",
   "license": "Apache-2.0",
   "type": "module",

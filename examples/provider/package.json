@@ -1,6 +1,6 @@
 {
   "name": "@proofmeta/example-provider",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Reference ProofMeta Provider Agent — serves a signed Manifest at /.well-known/proofmeta.json, handles License Requests end-to-end via the Free resolver, and exposes the envelope chain over GET.",
   "license": "Apache-2.0",
@@ -11,7 +11,7 @@
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@proofmeta/sdk-ts": "*",
-    "@proofmeta/resolver-free": "*"
+    "@proofmeta/sdk-ts": "^0.3.0",
+    "@proofmeta/resolver-free": "^0.3.0"
   }
 }
