@@ -165,6 +165,10 @@ export async function verifyEnvelope<P extends PayloadBase>(
     return { ok: false, reason: "signature is not valid hex" };
   }
 
+  if (typeof envelope.timestamp !== "string") {
+    return { ok: false, reason: "envelope.timestamp must be a string" };
+  }
+
   const msg = new TextEncoder().encode(jcs(signingProjection(envelope)));
   const ok = await ed25519.verifyAsync(sigBytes, msg, publicKey);
   if (!ok) return { ok: false, reason: "invalid ed25519 signature" };
@@ -331,6 +335,12 @@ export async function verifyChain(
         (env.payload as { status?: unknown }).status === "OPEN"
       ) {
         licenseProviderId = (env.payload as { provider_id?: unknown }).provider_id;
+        if (typeof licenseProviderId !== "string" || !licenseProviderId.startsWith("did:")) {
+          return {
+            ok: false,
+            reason: "root OPEN envelope must have a valid provider_id DID string",
+          };
+        }
       }
     } else {
       if (env.in_reply_to === undefined) {
