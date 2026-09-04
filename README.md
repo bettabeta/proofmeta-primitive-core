@@ -7,7 +7,7 @@
 > The permission layer for the agentic web — an open protocol that lets any AI agent discover, request, and use licensed items from any other AI agent, with machine-readable terms and a status lifecycle.
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Status: Draft](https://img.shields.io/badge/Status-Draft-yellow)]()
+[![Status: v1 Draft](https://img.shields.io/badge/Status-v1_Draft-yellow)]()
 
 ---
 
@@ -78,8 +78,7 @@ A Provider Agent publishes a manifest at `/.well-known/proofmeta.json`. Every Pr
   "payload_hash": "sha256:...",
   "author": "did:key:z6Mkh...",
   "signature": "ed25519:...",
-  "timestamp": "2026-04-21T10:00:00Z",
-  "anchors": []
+  "timestamp": "2026-04-21T10:00:00Z"
 }
 ```
 
@@ -98,19 +97,19 @@ package.json            → npm workspaces (packages/*, examples/*)
 .cursorrules            → Cursor IDE rules
 ```
 
-## What v1 ships
+## Implemented in the v1 draft
 
-v1 is a working vertical slice, not a wishlist. A Provider can stand up, a Consumer can request a license, and an envelope chain can be re-verified by anyone end-to-end — no platform, no chain, no coordination beyond the manifest URL.
+**ProofMeta v1 Draft — working reference implementation, packages 0.2.0.** The v1 draft has a working reference vertical slice. It is not yet a released v1: the canonical spec domain and the acceptance evidence listed in the master specification are still open. A Provider can stand up, a Consumer can request a license, and an envelope chain can be re-verified by anyone end-to-end — no platform, no chain, no coordination beyond the manifest URL.
 
 - [x] Manifest spec (`payload.manifest.schema.json`)
 - [x] License-request + status-update spec (`payload.license-request.schema.json`, `payload.status-update.schema.json`)
-- [x] Status lifecycle: `OPEN → PENDING → GRANTED | DENIED → SUSPENDED → REVOKED`
+- [x] Status lifecycle: `OPEN → PENDING → {GRANTED | DENIED}`; from `GRANTED`: `SUSPENDED` or terminal `REVOKED`; from `SUSPENDED`: `GRANTED` or terminal `REVOKED`; `DENIED` is terminal.
 - [x] TypeScript SDK (`@proofmeta/sdk-ts`) — ed25519 signing, JCS hashing, envelope + chain verification
 - [x] Reference resolver interface + free-license implementation (`@proofmeta/resolvers`)
 - [x] Demo Provider and Consumer agents (`examples/provider`, `examples/consumer`)
 - [x] Validator CLI (`@proofmeta/cli` → `proofmeta validate <file>`)
 
-Next up (post-v1): content-hashing for catalog items, optional anchor resolvers (Tier 3), and a normative test-vector corpus.
+Next: publish the v1 draft at the canonical spec domain, record the Provider/Consumer setup benchmarks, and add a normative cross-implementation test-vector corpus. Planned for v1.1: one payment resolver, one optional anchor resolver with a Tier-3 demo, and resolver-informed requirements for a future ERC-7521 wrapping interface; the formal interface remains deferred to v2.
 
 ## License
 

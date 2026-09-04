@@ -8,7 +8,12 @@
  */
 
 import { readFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { validateInput, formatReport } from "./validate.mjs";
+
+const { version: CLI_VERSION } = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf-8"),
+);
 
 const USAGE = `proofmeta — ProofMeta reference validator
 
@@ -36,7 +41,7 @@ export async function main(argv) {
   }
 
   if (argv[0] === "--version" || argv[0] === "-v") {
-    process.stdout.write("proofmeta 0.1.0\n");
+    process.stdout.write(`proofmeta ${CLI_VERSION}\n`);
     return 0;
   }
 

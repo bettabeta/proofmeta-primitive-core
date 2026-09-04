@@ -50,7 +50,8 @@
     },
     "anchors": {
       "type": "array",
-      "description": "Optional external anchors. MAY be omitted entirely; an empty array is also valid. See §3.5.",
+      "minItems": 1,
+      "description": "Optional external anchors. MAY be omitted entirely; when present, MUST contain at least one anchor. See §3.5.",
       "items": {
         "$ref": "#/definitions/anchor"
       }
