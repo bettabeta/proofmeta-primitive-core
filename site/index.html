@@ -618,7 +618,7 @@
         <ul>
           <li>TypeScript reference implementation</li>
           <li>Create, sign and verify envelopes</li>
-          <li>License contract templates and scope tags</li>
+          <li>Normative primitive scope vocabulary</li>
           <li>Validator CLI for any ProofMeta artifact</li>
           <li><code>npm install @proofmeta/sdk-ts@0.2.0</code></li>
         </ul>
@@ -661,7 +661,7 @@
       <div class="component">
         <div class="c-no">SEMANTICS <span class="status-badge spec">SEPARATE ADD-ON</span></div>
         <h3>License Contracts</h3>
-        <p>Chain-agnostic license semantics. Scope tags, pricing models, ready-made templates. One JSON object per permission surface.</p>
+        <p>Optional <a href="https://github.com/bettabeta/proofmeta-license-contracts" target="_blank" rel="noopener"><code>proofmeta-license-contracts</code></a> add-on: chain-agnostic license semantics, pricing models and ready-made templates. One JSON object per permission surface.</p>
       </div>
       <div class="component">
         <div class="c-no">TOOLING <span class="status-badge spec">PUBLISHED · npm 0.2.0</span></div>
@@ -699,14 +699,29 @@
     <h2>Discover. Request. Decide. <span class="amber">Act with proof.</span></h2>
     <p>An agent discovers permission metadata attached to an artefact, requests access, receives a machine-readable grant or denial, and acts only inside the terms — with an auditable trail.</p>
 
-<pre class="code" aria-label="Example permission object"><span class="c">// Permission metadata — pointer to terms, not the contract itself</span>
-{
-  <span class="k">"artefact"</span>:   <span class="s">"urn:proofmeta:dataset:training-corpus-v2"</span>,
-  <span class="k">"scope"</span>:      [<span class="s">"inference-allowed"</span>, <span class="s">"training-excluded"</span>, <span class="s">"commercial-use"</span>],
-  <span class="k">"terms_url"</span>:  <span class="s">"https://example.com/terms/corpus-v2"</span>,
-  <span class="k">"terms_hash"</span>: <span class="s">"sha256:a1b2c3..."</span>,
-  <span class="k">"proof"</span>:      { <span class="k">"envelope_id"</span>: <span class="s">"env_..."</span>, <span class="k">"status"</span>: <span class="s">"GRANTED"</span> }
+    <figure style="margin:0;">
+      <figcaption style="font-size:12px; margin-bottom:8px;">Manifest payload excerpt — showing <code>payload.items[]</code> and <code>payload.license_types[]</code>. The complete manifest artifact is wrapped in a Signed Envelope.</figcaption>
+      <pre class="code" aria-label="Manifest payload excerpt; the complete artifact is wrapped in a Signed Envelope">{
+  <span class="k">"payload"</span>: {
+    <span class="k">"items"</span>: [
+      {
+        <span class="k">"item_id"</span>: <span class="s">"training-corpus-v2"</span>,
+        <span class="k">"name"</span>: <span class="s">"Training Corpus v2"</span>,
+        <span class="k">"available_licenses"</span>: [<span class="s">"commercial-standard"</span>],
+        <span class="k">"content_hash"</span>: <span class="s">"sha256:0da2a7cd70ea24dcbd53fa22c29528c99a71021248c5ab4c86ecd13a8f34a1d2"</span>
+      }
+    ],
+    <span class="k">"license_types"</span>: [
+      {
+        <span class="k">"id"</span>: <span class="s">"commercial-standard"</span>,
+        <span class="k">"terms_url"</span>: <span class="s">"https://example.com/terms/commercial-standard"</span>,
+        <span class="k">"terms_hash"</span>: <span class="s">"sha256:bcfd030a074d8f9b09c84fe7950537814ad72f511db0cac8a6495f67ffe59688"</span>,
+        <span class="k">"scope"</span>: [<span class="s">"commercial"</span>, <span class="s">"derivative-allowed"</span>, <span class="s">"ai-training-excluded"</span>]
+      }
+    ]
+  }
 }</pre>
+    </figure>
 
     <figure style="margin:0;">
       <figcaption style="font-size:12px; margin-bottom:8px;">Allowed license lifecycle transitions</figcaption>
