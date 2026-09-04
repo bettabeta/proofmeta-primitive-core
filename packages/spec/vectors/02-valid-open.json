@@ -1,0 +1,26 @@
+{
+  "id": "valid-open",
+  "description": "A consumer-authored root OPEN request with provider_id is valid.",
+  "input": {
+    "proofmeta": "1.0",
+    "payload": {
+      "type": "license.request",
+      "request_id": "018f0000-0000-7000-8000-000000000001",
+      "consumer": {
+        "id": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2"
+      },
+      "provider_id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+      "item_id": "vector-item",
+      "license_type": "free",
+      "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "status": "OPEN"
+    },
+    "payload_hash": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448",
+    "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+    "signature": "ed25519:94cc88225756099951d01e66755f4146d667c059642bd1ac199cee98111e7197f3d388665696df9f36d25c50ec58b5dd344a6cdf7cb6f8a3bbffebbe7c800a04",
+    "timestamp": "2026-09-04T10:01:00.000Z"
+  },
+  "expect": {
+    "valid": true
+  }
+}

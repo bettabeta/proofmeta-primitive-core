@@ -1,0 +1,20 @@
+{
+  "id": "valid-status-update",
+  "description": "A provider-authored PENDING status update with a signed parent link is envelope-valid.",
+  "input": {
+    "proofmeta": "1.0",
+    "payload": {
+      "type": "status.update",
+      "request_id": "018f0000-0000-7000-8000-000000000001",
+      "status": "PENDING"
+    },
+    "payload_hash": "sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69",
+    "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+    "signature": "ed25519:9289317f5b4c78340e6c4d41a660d3f02bf5ed9d2225b8e4084207b634b1f39b29d5fe5a9c2c7b3fe65b1ed857204996561e64f61a525c76439ecc6f31323b02",
+    "timestamp": "2026-09-04T10:02:00.000Z",
+    "in_reply_to": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448"
+  },
+  "expect": {
+    "valid": true
+  }
+}
