@@ -6,17 +6,16 @@
  *
  * Signing procedure:
  *   1. payload_hash = "sha256:" + hex( sha256( jcs(payload) ) )
- *   2. signature    = "ed25519:" + hex( ed25519.sign( utf8(payload_hash), privateKey ) )
- *
- * Signing the ASCII payload_hash string (not the raw canonical JSON) keeps the
- * signing surface small and unambiguous: all a verifier needs is the hash and
- * the author DID.
+ *   2. projection   = { proofmeta, payload_hash, author, timestamp,
+ *                       ...(in_reply_to when present) }
+ *   3. signature    = "ed25519:" + hex( ed25519.sign( utf8(jcs(projection)), privateKey ) )
  */
 
 import * as ed25519 from "@noble/ed25519";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { decodeDidKey, isDidKeyEd25519 } from "./did-key.js";
 import { hashPayload, hashesEqual } from "./hash.js";
+import { jcs } from "./jcs.js";
 import {
   isAttestationEnvelope,
   validateAttestationChain,
@@ -79,8 +78,15 @@ export async function createEnvelope<P extends PayloadBase>(
   }
 
   const payload_hash = hashPayload(payload);
+  const projection = signingProjection({
+    proofmeta: PROOFMETA_PROTOCOL_VERSION,
+    payload_hash,
+    author,
+    timestamp,
+    ...(in_reply_to !== undefined ? { in_reply_to } : {}),
+  });
   const sigBytes = await ed25519.signAsync(
-    new TextEncoder().encode(payload_hash),
+    new TextEncoder().encode(jcs(projection)),
     privateKey,
   );
   const signature = `ed25519:${bytesToHex(sigBytes)}` as Ed25519SigRef;
@@ -117,7 +123,8 @@ export interface VerifyOptions {
  * Verify a Signed Envelope:
  *   1. proofmeta version is 1.0
  *   2. payload_hash matches sha256(jcs(payload))
- *   3. signature is a valid ed25519 signature over the payload_hash string
+ *   3. signature is valid over the UTF-8 JCS signing projection
+ *   4. core manifest and OPEN actors match their payload identities
  *
  * Does NOT verify `in_reply_to` chain integrity (that is a lifecycle concern
  * handled by verifyChain) or anchor authenticity (resolver concern).
@@ -158,9 +165,28 @@ export async function verifyEnvelope<P extends PayloadBase>(
     return { ok: false, reason: "signature is not valid hex" };
   }
 
-  const msg = new TextEncoder().encode(envelope.payload_hash);
+  const msg = new TextEncoder().encode(jcs(signingProjection(envelope)));
   const ok = await ed25519.verifyAsync(sigBytes, msg, publicKey);
-  return ok ? { ok: true } : { ok: false, reason: "invalid ed25519 signature" };
+  if (!ok) return { ok: false, reason: "invalid ed25519 signature" };
+
+  if (envelope.payload.type === "manifest") {
+    const providerId = (envelope.payload as { provider?: { id?: unknown } }).provider?.id;
+    if (envelope.author !== providerId) {
+      return { ok: false, reason: "manifest author must equal payload.provider.id" };
+    }
+  }
+
+  if (
+    envelope.payload.type === "license.request" &&
+    (envelope.payload as { status?: unknown }).status === "OPEN"
+  ) {
+    const consumerId = (envelope.payload as { consumer?: { id?: unknown } }).consumer?.id;
+    if (envelope.author !== consumerId) {
+      return { ok: false, reason: "OPEN author must equal payload.consumer.id" };
+    }
+  }
+
+  return { ok: true };
 }
 
 // ── Status transitions ───────────────────────────────────────────────────
@@ -289,6 +315,7 @@ export async function verifyChain(
 
   let prevHash: Sha256Ref | undefined;
   let rootRequestId: string | undefined;
+  let licenseProviderId: unknown;
 
   for (let i = 0; i < envelopes.length; i++) {
     const env = envelopes[i]!;
@@ -298,6 +325,12 @@ export async function verifyChain(
     if (i === 0) {
       if (env.in_reply_to !== undefined) {
         return { ok: false, reason: "root envelope must not have in_reply_to" };
+      }
+      if (
+        env.payload.type === "license.request" &&
+        (env.payload as { status?: unknown }).status === "OPEN"
+      ) {
+        licenseProviderId = (env.payload as { provider_id?: unknown }).provider_id;
       }
     } else {
       if (env.in_reply_to === undefined) {
@@ -312,6 +345,17 @@ export async function verifyChain(
           reason: `envelope[${i}].in_reply_to does not match previous payload_hash`,
         };
       }
+    }
+
+    if (
+      licenseProviderId !== undefined &&
+      env.payload.type === "status.update" &&
+      env.author !== licenseProviderId
+    ) {
+      return {
+        ok: false,
+        reason: `envelope[${i}] license status author must equal root OPEN payload.provider_id`,
+      };
     }
 
     // Track request_id consistency if present on the payload
@@ -341,6 +385,24 @@ export async function verifyChain(
 }
 
 // ── Utility ──────────────────────────────────────────────────────────────
+
+type SigningProjectionSource = Pick<
+  Envelope,
+  "proofmeta" | "payload_hash" | "author" | "timestamp" | "in_reply_to"
+>;
+
+/** Construct the exact D16 author-signed projection; anchors stay external. */
+function signingProjection(source: SigningProjectionSource) {
+  return {
+    proofmeta: source.proofmeta,
+    payload_hash: source.payload_hash,
+    author: source.author,
+    timestamp: source.timestamp,
+    ...(source.in_reply_to !== undefined
+      ? { in_reply_to: source.in_reply_to }
+      : {}),
+  };
+}
 
 function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
   if (a.length !== b.length) return false;

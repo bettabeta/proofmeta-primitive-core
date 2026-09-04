@@ -30,8 +30,8 @@ Input file may contain:
 The validator checks:
   1. JSON Schema compliance (envelope + payload shape for known payload types).
   2. payload_hash matches sha256(JCS(payload)).
-  3. ed25519 signature over payload_hash.
-  4. For arrays: in_reply_to integrity and request_id consistency.
+  3. Ed25519 signature over the UTF-8 JCS envelope signing projection and core actor authority.
+  4. For arrays: in_reply_to integrity, request_id consistency, and license Provider authority.
 `;
 
 export async function main(argv) {

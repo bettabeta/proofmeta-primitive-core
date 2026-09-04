@@ -1,6 +1,6 @@
 {
   "name": "@proofmeta/cli",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "ProofMeta validator CLI — `proofmeta validate <file>` checks schema compliance, JCS-correct payload_hash, ed25519 signature, and in_reply_to chain integrity.",
   "license": "Apache-2.0",
   "type": "module",
@@ -16,8 +16,8 @@
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@proofmeta/sdk-ts": "^0.2.0",
-    "@proofmeta/spec": "^0.2.0",
+    "@proofmeta/sdk-ts": "^0.3.0",
+    "@proofmeta/spec": "^0.3.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
   },

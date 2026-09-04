@@ -1,0 +1,331 @@
+{
+  "vector_version": "proofmeta-envelope-signing-v1-2026-09-04",
+  "normative_decisions": [
+    "D16",
+    "D17",
+    "D18"
+  ],
+  "canonicalization": "JCS (RFC 8785)",
+  "signature_algorithm": "Ed25519",
+  "text_encoding": "UTF-8",
+  "signature_encoding": "ed25519:<128 lowercase hex characters>",
+  "note": "Private keys are deterministic test material only and MUST NOT be used outside conformance tests.",
+  "identities": {
+    "provider": {
+      "private_key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "public_key_hex": "03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8",
+      "did": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd"
+    },
+    "consumer": {
+      "private_key_hex": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+      "public_key_hex": "29acbae141bccaf0b22e1a94d34d0bc7361e526d0bfe12c89794bc9322966dd7",
+      "did": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2"
+    },
+    "resolver": {
+      "private_key_hex": "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+      "public_key_hex": "2543b92ff1095511476adc8369db6ddc933665a11978dda1404ee1066ca9559d",
+      "did": "did:key:z6Mkgxj2R3HLtQRpPnvfvpuKEceSqf3tZHBjdmZ3fFz3JHGG"
+    },
+    "authority": {
+      "private_key_hex": "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f",
+      "public_key_hex": "174553b456dddfc6908ecab1c101fe6ab21e2baa0617795b7d43a63482993fd5",
+      "did": "did:key:z6Mkg26jczDiqsPK4momfvhZTTyFefWEyxYiSisFJ2wWJFkg"
+    }
+  },
+  "cases": [
+    {
+      "id": "manifest-provider-root",
+      "signer": "provider",
+      "expected_envelope_valid_0_3": true,
+      "expected_authority_valid": true,
+      "payload_jcs": "{\"catalog_endpoint\":\"https://provider.example/catalog\",\"license_types\":[{\"id\":\"free\",\"scope\":[\"non-commercial\"],\"terms_hash\":\"sha256:1111111111111111111111111111111111111111111111111111111111111111\",\"terms_url\":\"https://provider.example/terms/free\"}],\"provider\":{\"id\":\"did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd\",\"name\":\"Vector Provider\"},\"request_endpoint\":\"https://provider.example/requests\",\"type\":\"manifest\"}",
+      "payload_hash": "sha256:59575c347ca171f91dc390576f3f6cdc875cb1dacc503ef89987404995116a7f",
+      "signing_projection": {
+        "proofmeta": "1.0",
+        "payload_hash": "sha256:59575c347ca171f91dc390576f3f6cdc875cb1dacc503ef89987404995116a7f",
+        "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+        "timestamp": "2026-09-04T10:00:00.000Z"
+      },
+      "signing_projection_jcs": "{\"author\":\"did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd\",\"payload_hash\":\"sha256:59575c347ca171f91dc390576f3f6cdc875cb1dacc503ef89987404995116a7f\",\"proofmeta\":\"1.0\",\"timestamp\":\"2026-09-04T10:00:00.000Z\"}",
+      "signing_bytes_hex": "7b22617574686f72223a226469643a6b65793a7a364d6b656852676637794a62676147665973646f41734b6442504533646a324359686f775164636a71534a67765664222c227061796c6f61645f68617368223a227368613235363a35393537356333343763613137316639316463333930353736663366366364633837356362316461636335303365663839393837343034393935313136613766222c2270726f6f666d657461223a22312e30222c2274696d657374616d70223a22323032362d30392d30345431303a30303a30302e3030305a227d",
+      "signature": "ed25519:b6e3e664594ee9636ecb266dfdfffc0d0a38db842e8529060eb2e0bb8d5c4c6bd198e8a8a62561609e479e0bd42a0992fd477f8d31c5615d4277a36f5c170703",
+      "envelope": {
+        "proofmeta": "1.0",
+        "payload": {
+          "type": "manifest",
+          "provider": {
+            "id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+            "name": "Vector Provider"
+          },
+          "request_endpoint": "https://provider.example/requests",
+          "catalog_endpoint": "https://provider.example/catalog",
+          "license_types": [
+            {
+              "id": "free",
+              "terms_url": "https://provider.example/terms/free",
+              "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+              "scope": [
+                "non-commercial"
+              ]
+            }
+          ]
+        },
+        "payload_hash": "sha256:59575c347ca171f91dc390576f3f6cdc875cb1dacc503ef89987404995116a7f",
+        "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+        "signature": "ed25519:b6e3e664594ee9636ecb266dfdfffc0d0a38db842e8529060eb2e0bb8d5c4c6bd198e8a8a62561609e479e0bd42a0992fd477f8d31c5615d4277a36f5c170703",
+        "timestamp": "2026-09-04T10:00:00.000Z"
+      }
+    },
+    {
+      "id": "license-open-consumer-root",
+      "signer": "consumer",
+      "expected_envelope_valid_0_3": true,
+      "expected_authority_valid": true,
+      "payload_jcs": "{\"consumer\":{\"id\":\"did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2\"},\"item_id\":\"vector-item\",\"license_type\":\"free\",\"provider_id\":\"did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd\",\"request_id\":\"018f0000-0000-7000-8000-000000000001\",\"status\":\"OPEN\",\"terms_hash\":\"sha256:1111111111111111111111111111111111111111111111111111111111111111\",\"type\":\"license.request\"}",
+      "payload_hash": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448",
+      "signing_projection": {
+        "proofmeta": "1.0",
+        "payload_hash": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448",
+        "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+        "timestamp": "2026-09-04T10:01:00.000Z"
+      },
+      "signing_projection_jcs": "{\"author\":\"did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2\",\"payload_hash\":\"sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448\",\"proofmeta\":\"1.0\",\"timestamp\":\"2026-09-04T10:01:00.000Z\"}",
+      "signing_bytes_hex": "7b22617574686f72223a226469643a6b65793a7a364d6b684677584e46576f734c6575677653663477634c39743375755258756547534654526753764868576a354732222c227061796c6f61645f68617368223a227368613235363a39396236636630303566653966323464303833373333323361646566346430373330623237356534653039373066633534646662383437373834663361343438222c2270726f6f666d657461223a22312e30222c2274696d657374616d70223a22323032362d30392d30345431303a30313a30302e3030305a227d",
+      "signature": "ed25519:94cc88225756099951d01e66755f4146d667c059642bd1ac199cee98111e7197f3d388665696df9f36d25c50ec58b5dd344a6cdf7cb6f8a3bbffebbe7c800a04",
+      "envelope": {
+        "proofmeta": "1.0",
+        "payload": {
+          "type": "license.request",
+          "request_id": "018f0000-0000-7000-8000-000000000001",
+          "consumer": {
+            "id": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2"
+          },
+          "provider_id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+          "item_id": "vector-item",
+          "license_type": "free",
+          "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "status": "OPEN"
+        },
+        "payload_hash": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448",
+        "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+        "signature": "ed25519:94cc88225756099951d01e66755f4146d667c059642bd1ac199cee98111e7197f3d388665696df9f36d25c50ec58b5dd344a6cdf7cb6f8a3bbffebbe7c800a04",
+        "timestamp": "2026-09-04T10:01:00.000Z"
+      }
+    },
+    {
+      "id": "license-pending-provider-non-root",
+      "signer": "provider",
+      "expected_envelope_valid_0_3": true,
+      "expected_authority_valid": true,
+      "payload_jcs": "{\"request_id\":\"018f0000-0000-7000-8000-000000000001\",\"status\":\"PENDING\",\"type\":\"status.update\"}",
+      "payload_hash": "sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69",
+      "signing_projection": {
+        "proofmeta": "1.0",
+        "payload_hash": "sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69",
+        "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+        "timestamp": "2026-09-04T10:02:00.000Z",
+        "in_reply_to": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448"
+      },
+      "signing_projection_jcs": "{\"author\":\"did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd\",\"in_reply_to\":\"sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448\",\"payload_hash\":\"sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69\",\"proofmeta\":\"1.0\",\"timestamp\":\"2026-09-04T10:02:00.000Z\"}",
+      "signing_bytes_hex": "7b22617574686f72223a226469643a6b65793a7a364d6b656852676637794a62676147665973646f41734b6442504533646a324359686f775164636a71534a67765664222c22696e5f7265706c795f746f223a227368613235363a39396236636630303566653966323464303833373333323361646566346430373330623237356534653039373066633534646662383437373834663361343438222c227061796c6f61645f68617368223a227368613235363a61373535353235346439366634326231346335643261393733313431383638666361636464353639633039343232626463373765383865363234393433623639222c2270726f6f666d657461223a22312e30222c2274696d657374616d70223a22323032362d30392d30345431303a30323a30302e3030305a227d",
+      "signature": "ed25519:9289317f5b4c78340e6c4d41a660d3f02bf5ed9d2225b8e4084207b634b1f39b29d5fe5a9c2c7b3fe65b1ed857204996561e64f61a525c76439ecc6f31323b02",
+      "envelope": {
+        "proofmeta": "1.0",
+        "payload": {
+          "type": "status.update",
+          "request_id": "018f0000-0000-7000-8000-000000000001",
+          "status": "PENDING"
+        },
+        "payload_hash": "sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69",
+        "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+        "signature": "ed25519:9289317f5b4c78340e6c4d41a660d3f02bf5ed9d2225b8e4084207b634b1f39b29d5fe5a9c2c7b3fe65b1ed857204996561e64f61a525c76439ecc6f31323b02",
+        "timestamp": "2026-09-04T10:02:00.000Z",
+        "in_reply_to": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448"
+      }
+    },
+    {
+      "id": "license-pending-resolver-non-root",
+      "signer": "resolver",
+      "expected_envelope_valid_0_3": true,
+      "expected_authority_valid": false,
+      "payload_jcs": "{\"request_id\":\"018f0000-0000-7000-8000-000000000001\",\"status\":\"PENDING\",\"type\":\"status.update\"}",
+      "payload_hash": "sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69",
+      "signing_projection": {
+        "proofmeta": "1.0",
+        "payload_hash": "sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69",
+        "author": "did:key:z6Mkgxj2R3HLtQRpPnvfvpuKEceSqf3tZHBjdmZ3fFz3JHGG",
+        "timestamp": "2026-09-04T10:02:00.000Z",
+        "in_reply_to": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448"
+      },
+      "signing_projection_jcs": "{\"author\":\"did:key:z6Mkgxj2R3HLtQRpPnvfvpuKEceSqf3tZHBjdmZ3fFz3JHGG\",\"in_reply_to\":\"sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448\",\"payload_hash\":\"sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69\",\"proofmeta\":\"1.0\",\"timestamp\":\"2026-09-04T10:02:00.000Z\"}",
+      "signing_bytes_hex": "7b22617574686f72223a226469643a6b65793a7a364d6b67786a325233484c74515270506e76667670754b45636553716633745a48426a646d5a3366467a334a484747222c22696e5f7265706c795f746f223a227368613235363a39396236636630303566653966323464303833373333323361646566346430373330623237356534653039373066633534646662383437373834663361343438222c227061796c6f61645f68617368223a227368613235363a61373535353235346439366634326231346335643261393733313431383638666361636464353639633039343232626463373765383865363234393433623639222c2270726f6f666d657461223a22312e30222c2274696d657374616d70223a22323032362d30392d30345431303a30323a30302e3030305a227d",
+      "signature": "ed25519:f31883c363687f624002e3515d37a79df39219a82cc64b049f10866f33a5da0cbd67415a320d9f17de742c4e76e6046cd224876dc2eadf8cd75f30b3a1e13906",
+      "envelope": {
+        "proofmeta": "1.0",
+        "payload": {
+          "type": "status.update",
+          "request_id": "018f0000-0000-7000-8000-000000000001",
+          "status": "PENDING"
+        },
+        "payload_hash": "sha256:a7555254d96f42b14c5d2a973141868fcacdd569c09422bdc77e88e624943b69",
+        "author": "did:key:z6Mkgxj2R3HLtQRpPnvfvpuKEceSqf3tZHBjdmZ3fFz3JHGG",
+        "signature": "ed25519:f31883c363687f624002e3515d37a79df39219a82cc64b049f10866f33a5da0cbd67415a320d9f17de742c4e76e6046cd224876dc2eadf8cd75f30b3a1e13906",
+        "timestamp": "2026-09-04T10:02:00.000Z",
+        "in_reply_to": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448"
+      }
+    },
+    {
+      "id": "root-attestation-authority",
+      "signer": "authority",
+      "expected_envelope_valid_0_3": true,
+      "expected_authority_valid": true,
+      "payload_jcs": "{\"policy\":{\"ref\":\"https://authority.example/policy/v1\"},\"status\":\"GRANTED\",\"subject\":{\"id\":\"vector-agent@host-1\"},\"type\":\"status.update\"}",
+      "payload_hash": "sha256:be4fa75067d64e41d4816fb1924ada072242e809475f033536e7b25d59d20546",
+      "signing_projection": {
+        "proofmeta": "1.0",
+        "payload_hash": "sha256:be4fa75067d64e41d4816fb1924ada072242e809475f033536e7b25d59d20546",
+        "author": "did:key:z6Mkg26jczDiqsPK4momfvhZTTyFefWEyxYiSisFJ2wWJFkg",
+        "timestamp": "2026-09-04T10:03:00.000Z"
+      },
+      "signing_projection_jcs": "{\"author\":\"did:key:z6Mkg26jczDiqsPK4momfvhZTTyFefWEyxYiSisFJ2wWJFkg\",\"payload_hash\":\"sha256:be4fa75067d64e41d4816fb1924ada072242e809475f033536e7b25d59d20546\",\"proofmeta\":\"1.0\",\"timestamp\":\"2026-09-04T10:03:00.000Z\"}",
+      "signing_bytes_hex": "7b22617574686f72223a226469643a6b65793a7a364d6b6732366a637a44697173504b346d6f6d6676685a545479466566574579785969536973464a3277574a466b67222c227061796c6f61645f68617368223a227368613235363a62653466613735303637643634653431643438313666623139323461646130373232343265383039343735663033333533366537623235643539643230353436222c2270726f6f666d657461223a22312e30222c2274696d657374616d70223a22323032362d30392d30345431303a30333a30302e3030305a227d",
+      "signature": "ed25519:b03c1fc8003aef012aeb2c9389dca7f27650077a019d73eb30a3ca6ab2012a3fec10a6826bc728350d3788b998305f7c7c75af72c5e4fefb1bfb87f9ff0f880c",
+      "envelope": {
+        "proofmeta": "1.0",
+        "payload": {
+          "type": "status.update",
+          "subject": {
+            "id": "vector-agent@host-1"
+          },
+          "policy": {
+            "ref": "https://authority.example/policy/v1"
+          },
+          "status": "GRANTED"
+        },
+        "payload_hash": "sha256:be4fa75067d64e41d4816fb1924ada072242e809475f033536e7b25d59d20546",
+        "author": "did:key:z6Mkg26jczDiqsPK4momfvhZTTyFefWEyxYiSisFJ2wWJFkg",
+        "signature": "ed25519:b03c1fc8003aef012aeb2c9389dca7f27650077a019d73eb30a3ca6ab2012a3fec10a6826bc728350d3788b998305f7c7c75af72c5e4fefb1bfb87f9ff0f880c",
+        "timestamp": "2026-09-04T10:03:00.000Z"
+      }
+    },
+    {
+      "id": "manifest-provider-mismatch",
+      "signer": "provider",
+      "expected_envelope_valid_0_3": true,
+      "expected_authority_valid": false,
+      "payload_jcs": "{\"catalog_endpoint\":\"https://provider.example/catalog\",\"license_types\":[{\"id\":\"free\",\"scope\":[\"non-commercial\"],\"terms_hash\":\"sha256:1111111111111111111111111111111111111111111111111111111111111111\",\"terms_url\":\"https://provider.example/terms/free\"}],\"provider\":{\"id\":\"did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2\",\"name\":\"Vector Provider\"},\"request_endpoint\":\"https://provider.example/requests\",\"type\":\"manifest\"}",
+      "payload_hash": "sha256:5c5723ac069b9e89e1b33e9e6398747ba1f06770e7e5be656a80e52154762fbd",
+      "signing_projection": {
+        "proofmeta": "1.0",
+        "payload_hash": "sha256:5c5723ac069b9e89e1b33e9e6398747ba1f06770e7e5be656a80e52154762fbd",
+        "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+        "timestamp": "2026-09-04T10:04:00.000Z"
+      },
+      "signing_projection_jcs": "{\"author\":\"did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd\",\"payload_hash\":\"sha256:5c5723ac069b9e89e1b33e9e6398747ba1f06770e7e5be656a80e52154762fbd\",\"proofmeta\":\"1.0\",\"timestamp\":\"2026-09-04T10:04:00.000Z\"}",
+      "signing_bytes_hex": "7b22617574686f72223a226469643a6b65793a7a364d6b656852676637794a62676147665973646f41734b6442504533646a324359686f775164636a71534a67765664222c227061796c6f61645f68617368223a227368613235363a35633537323361633036396239653839653162333365396536333938373437626131663036373730653765356265363536613830653532313534373632666264222c2270726f6f666d657461223a22312e30222c2274696d657374616d70223a22323032362d30392d30345431303a30343a30302e3030305a227d",
+      "signature": "ed25519:19c2029d3206771ce5d5c6d365c35037547d64a4e40117b0a149bd4e28992ad003f56bf8983fa397ea0c495aaf61da8b1c6a5eccf81bd89808030be7e6a1d408",
+      "envelope": {
+        "proofmeta": "1.0",
+        "payload": {
+          "type": "manifest",
+          "provider": {
+            "id": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+            "name": "Vector Provider"
+          },
+          "request_endpoint": "https://provider.example/requests",
+          "catalog_endpoint": "https://provider.example/catalog",
+          "license_types": [
+            {
+              "id": "free",
+              "terms_url": "https://provider.example/terms/free",
+              "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+              "scope": [
+                "non-commercial"
+              ]
+            }
+          ]
+        },
+        "payload_hash": "sha256:5c5723ac069b9e89e1b33e9e6398747ba1f06770e7e5be656a80e52154762fbd",
+        "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+        "signature": "ed25519:19c2029d3206771ce5d5c6d365c35037547d64a4e40117b0a149bd4e28992ad003f56bf8983fa397ea0c495aaf61da8b1c6a5eccf81bd89808030be7e6a1d408",
+        "timestamp": "2026-09-04T10:04:00.000Z"
+      }
+    },
+    {
+      "id": "license-open-consumer-mismatch",
+      "signer": "consumer",
+      "expected_envelope_valid_0_3": true,
+      "expected_authority_valid": false,
+      "payload_jcs": "{\"consumer\":{\"id\":\"did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd\"},\"item_id\":\"vector-item\",\"license_type\":\"free\",\"provider_id\":\"did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd\",\"request_id\":\"018f0000-0000-7000-8000-000000000001\",\"status\":\"OPEN\",\"terms_hash\":\"sha256:1111111111111111111111111111111111111111111111111111111111111111\",\"type\":\"license.request\"}",
+      "payload_hash": "sha256:4d0edb98a7a1c9a578e287c39c13b35ae0f82fc88bf975677a2537e09acae029",
+      "signing_projection": {
+        "proofmeta": "1.0",
+        "payload_hash": "sha256:4d0edb98a7a1c9a578e287c39c13b35ae0f82fc88bf975677a2537e09acae029",
+        "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+        "timestamp": "2026-09-04T10:05:00.000Z"
+      },
+      "signing_projection_jcs": "{\"author\":\"did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2\",\"payload_hash\":\"sha256:4d0edb98a7a1c9a578e287c39c13b35ae0f82fc88bf975677a2537e09acae029\",\"proofmeta\":\"1.0\",\"timestamp\":\"2026-09-04T10:05:00.000Z\"}",
+      "signing_bytes_hex": "7b22617574686f72223a226469643a6b65793a7a364d6b684677584e46576f734c6575677653663477634c39743375755258756547534654526753764868576a354732222c227061796c6f61645f68617368223a227368613235363a34643065646239386137613163396135373865323837633339633133623335616530663832666338386266393735363737613235333765303961636165303239222c2270726f6f666d657461223a22312e30222c2274696d657374616d70223a22323032362d30392d30345431303a30353a30302e3030305a227d",
+      "signature": "ed25519:4a963da0762da5323ee75c2a19fd513d8876244af9cea9859b16e1fcbccdb31712f8cc9df9cc70cdfebde3d43551ec9966528f1e7b0eff2a4216544486ddea0e",
+      "envelope": {
+        "proofmeta": "1.0",
+        "payload": {
+          "type": "license.request",
+          "request_id": "018f0000-0000-7000-8000-000000000001",
+          "consumer": {
+            "id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd"
+          },
+          "provider_id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+          "item_id": "vector-item",
+          "license_type": "free",
+          "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "status": "OPEN"
+        },
+        "payload_hash": "sha256:4d0edb98a7a1c9a578e287c39c13b35ae0f82fc88bf975677a2537e09acae029",
+        "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+        "signature": "ed25519:4a963da0762da5323ee75c2a19fd513d8876244af9cea9859b16e1fcbccdb31712f8cc9df9cc70cdfebde3d43551ec9966528f1e7b0eff2a4216544486ddea0e",
+        "timestamp": "2026-09-04T10:05:00.000Z"
+      }
+    }
+  ],
+  "legacy_payload_hash_only": {
+    "id": "legacy-0.2-payload-hash-only",
+    "signer": "consumer",
+    "signing_input": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448",
+    "signing_bytes_hex": "7368613235363a39396236636630303566653966323464303833373333323361646566346430373330623237356534653039373066633534646662383437373834663361343438",
+    "signature": "ed25519:28dada7285aa454bb5c857b6adb7b1ac558007c254f119949c634ed1b3f62ced153d245f3dc105516b0028a35c9637b22ccd588db0227b2097272f4cb98b490c",
+    "envelope": {
+      "proofmeta": "1.0",
+      "payload": {
+        "type": "license.request",
+        "request_id": "018f0000-0000-7000-8000-000000000001",
+        "consumer": {
+          "id": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2"
+        },
+        "provider_id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+        "item_id": "vector-item",
+        "license_type": "free",
+        "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "status": "OPEN"
+      },
+      "payload_hash": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448",
+      "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+      "signature": "ed25519:28dada7285aa454bb5c857b6adb7b1ac558007c254f119949c634ed1b3f62ced153d245f3dc105516b0028a35c9637b22ccd588db0227b2097272f4cb98b490c",
+      "timestamp": "2026-09-04T10:01:00.000Z"
+    },
+    "expected_envelope_valid_0_3": false
+  },
+  "unsigned_fields": [
+    "payload",
+    "signature",
+    "anchors"
+  ],
+  "mutation_expectations": {
+    "proofmeta": false,
+    "payload_hash": false,
+    "author": false,
+    "timestamp": false,
+    "in_reply_to": false,
+    "anchors": true
+  }
+}

@@ -2,7 +2,7 @@
 
 > **What this document is:** The single source of truth for every AI agent, human developer, and tool (Claude Projects, Cursor, OpenClaw, etc.) working on ProofMeta. If it's not in this document, it's not decided yet.
 
-> **Last updated:** 2026-09-01 (D1–D7 locked 2026-04-16; D8–D11 + cleanup applied 2026-04-21; D12–D13 locked 2026-04-23; D14 accepted and merged 2026-06-21; D15 locked 2026-09-01)
+> **Last updated:** 2026-09-04 (D1–D7 locked 2026-04-16; D8–D11 + cleanup applied 2026-04-21; D12–D13 locked 2026-04-23; D14 accepted and merged 2026-06-21; D15 locked 2026-09-01; D16–D19 locked 2026-09-04)
 
 ---
 
@@ -48,9 +48,9 @@ These are non-negotiable. Every design decision must pass through these filters:
 
 **Everything in ProofMeta is a Signed Envelope.** A bare JSON proves nothing — anyone can write anything. For the protocol to be verifiable, every artifact must answer three questions:
 
-1. **Who** wrote this? → `ed25519` signature against `author` key
-2. **What** exactly was written? → `sha256` hash of payload
-3. **When** and **in what order**? → `timestamp` + optional `in_reply_to`
+1. **Who** wrote this? → `ed25519` signature against the `author` key
+2. **What** exactly was written? → `sha256` hash of `payload`, transitively authenticated by the signature
+3. **When** and **in what order**? → signed `timestamp` + signed optional `in_reply_to`
 
 #### Envelope Structure
 
@@ -72,10 +72,10 @@ These are non-negotiable. Every design decision must pass through these filters:
 | `payload` | ✅ | The actual content (any JSON object) |
 | `payload_hash` | ✅ | `sha256` of the JCS (RFC 8785) canonical serialization of `payload`. See §3.1.1. |
 | `author` | ✅ | DID identifying the signer. v1 MUST support `did:key` with ed25519 (see §3.1.2). Other DID methods MAY appear; consumers MAY accept them by policy. |
-| `signature` | ✅ | `ed25519` signature over `payload_hash` by author's key |
-| `timestamp` | ✅ | ISO 8601 UTC timestamp (author-asserted) |
-| `in_reply_to` | ⚠️ context | `payload_hash` of the logically previous envelope in the same lifecycle. Required for status updates and reviews. Omitted for roots (identity, skill publication). |
-| `anchors` | ❌ | Optional array of external anchors (see §3.5). MAY be omitted entirely for Tier-1 envelopes; when present, MUST be a non-empty array of valid anchor entries. |
+| `signature` | ✅ | `ed25519` signature over the deterministic JCS signing projection defined in §3.1.1, using the author's key |
+| `timestamp` | ✅ | ISO 8601 UTC timestamp asserted and signed by the author |
+| `in_reply_to` | ⚠️ context | Signed `payload_hash` of the logically previous envelope in the same lifecycle. Required for status updates and reviews. Omitted from roots and from their signing projections. |
+| `anchors` | ❌ | Optional, independently verified external evidence (see §3.5). Outside the author's signing projection; MAY be omitted and, when present, MUST be a non-empty array of valid anchor entries. |
 
 #### 3.1.1 Canonical Serialization (JCS / RFC 8785)
 
@@ -102,10 +102,45 @@ payload_hash = "sha256:" + hex( sha256( jcs_serialize(payload) ) )
 - Go: [`jcs`](https://pkg.go.dev/github.com/cyberphone/json-canonicalization)
 - Rust: [`serde_jcs`](https://crates.io/crates/serde_jcs)
 
-**What gets canonicalized and what doesn't:**
-- `payload_hash` is computed over the canonical form of `payload` **only** — not the whole envelope
-- The envelope itself (the outer object with `payload`, `signature`, etc.) has no canonicalization requirement, because nothing hashes over it
-- `signature` is computed over `payload_hash` (the string), not over a re-canonicalized envelope — this keeps signing fast and unambiguous
+**What gets hashed and signed:**
+- `payload_hash` is computed over the canonical form of `payload` **only**, using the procedure above.
+- The author then constructs a new signing-projection object containing exactly `proofmeta`, `payload_hash`, `author`, and `timestamp`, plus `in_reply_to` if and only if that field is present on the envelope. No other envelope field is copied into this projection.
+- The projection is serialized with JCS and encoded as UTF-8 bytes. `signature` is the Ed25519 signature over those bytes:
+
+For a root, the projection is:
+
+```json
+{
+  "proofmeta": "1.0",
+  "payload_hash": "sha256:...",
+  "author": "did:key:...",
+  "timestamp": "2026-09-04T10:00:00Z"
+}
+```
+
+For a non-root, the projection additionally contains:
+
+```json
+{
+  "proofmeta": "1.0",
+  "payload_hash": "sha256:...",
+  "author": "did:key:...",
+  "timestamp": "2026-09-04T10:01:00Z",
+  "in_reply_to": "sha256:..."
+}
+```
+
+```text
+signature = "ed25519:" + lowercase_hex(ed25519_sign(author_private_key, utf8(jcs_serialize(signing_projection))))
+```
+
+The encoded signature body is exactly 64 raw Ed25519 signature bytes represented as 128 lowercase hexadecimal characters, with no whitespace or padding. Together with the literal `ed25519:` prefix, a conforming `signature` string is therefore exactly 136 characters long.
+
+- `payload` is not duplicated in the signing projection; it remains transitively authenticated because a verifier MUST recompute `sha256(JCS(payload))`, compare it to the signed `payload_hash`, and then verify the projection signature.
+- `signature`, `payload`, and `anchors` are not members of the signing projection. The outer envelope has no whole-object canonicalization requirement.
+- A verifier MUST reconstruct exactly this projection from the received envelope and MUST fail closed if its signature does not verify.
+
+**Compatibility boundary.** This projection replaces the draft 0.2.x rule that signed only the `payload_hash` string. It is an intentionally **breaking pre-v1 draft change**, targeted for all ProofMeta packages at **0.3.0** while the protocol remains labeled **v1 draft**. A 0.3.0 verifier MUST NOT silently retry legacy payload-hash-only verification or report a legacy-only envelope as valid. Any explicitly offered migration or legacy-inspection tool MUST produce a distinct, non-valid result and MUST NOT participate in v1 lifecycle acceptance.
 
 **Why not sorted-keys-JSON or CBOR?**
 - Sorted-keys-JSON has no spec and many subtle ambiguities (number formatting, unicode escapes, duplicate keys). Every ad-hoc implementation disagrees in edge cases.
@@ -152,9 +187,9 @@ Envelopes MAY carry any syntactically-valid DID in `author`. The protocol does n
 
 #### What Becomes Independently Verifiable
 
-- **Integrity:** `sha256(payload) == payload_hash` → content wasn't altered
-- **Authenticity:** `verify(signature, payload_hash, author_pubkey) == true` → author is real
-- **Order within a lifecycle:** `in_reply_to` chains status updates of a single request
+- **Integrity:** `sha256(JCS(payload)) == payload_hash` → payload content wasn't altered
+- **Authenticity and signed context:** verifying the Ed25519 signature over the §3.1.1 projection proves the author key signed the protocol version, payload hash, author DID, timestamp, and optional parent link
+- **Order within a lifecycle:** signed `in_reply_to` values chain status updates of a single request; chain verification additionally enforces the actor rules in §3.4
 - **No fake reviews:** a review envelope must reference a valid `GRANTED` envelope hash, same author as the request, one review per grant. Math prevents fraud.
 
 #### What `in_reply_to` Is NOT
@@ -229,7 +264,7 @@ Inspired by:
 | Field | Required | Notes |
 |-------|----------|-------|
 | `payload.type` | ✅ | MUST be `"manifest"` |
-| `payload.provider.id` | ✅ | DID identifying the Provider |
+| `payload.provider.id` | ✅ | DID identifying the Provider; MUST equal the envelope `author` |
 | `payload.provider.name` / `.description` | ❌ | Human-readable, optional. Machine-first (Rule #4) |
 | `payload.request_endpoint` | ✅ | URL where Consumers POST signed OPEN envelopes |
 | `payload.catalog_endpoint` OR `payload.items` | ✅ (one of) | Either a query endpoint (§3.8) OR an inline `items` array. A small Provider with a handful of items MAY skip the endpoint and list them directly |
@@ -260,9 +295,9 @@ OPEN → PENDING → GRANTED | DENIED
 | Status | Meaning | Who sets it |
 |--------|---------|-------------|
 | `OPEN` | Consumer Agent has submitted a request | Consumer (signs the envelope) |
-| `PENDING` | A Resolver is processing (e.g., payment is in progress) | Resolver or Provider |
+| `PENDING` | A Resolver is processing (e.g., payment is in progress) | Provider Agent (after Resolver input, if any) |
 | `GRANTED` | License is active. Consumer can use the item | Provider Agent (after Resolver confirms) |
-| `DENIED` | Request was rejected (payment failed, terms violated, etc.) | Provider Agent or Resolver |
+| `DENIED` | Request was rejected (payment failed, terms violated, etc.) | Provider Agent (after Resolver input, if any) |
 | `SUSPENDED` | A granted license is temporarily paused; reinstatable to `GRANTED` | Provider Agent |
 | `REVOKED` | A previously granted license has been permanently withdrawn; terminal | Provider Agent |
 
@@ -280,6 +315,14 @@ OPEN → PENDING → GRANTED | DENIED
 **SUSPENDED vs REVOKED:** Both mean "not currently active," but they are not interchangeable. `SUSPENDED` is temporary and reinstatable; `REVOKED` is permanent and for-cause. This distinction MUST live in the signed protocol state — not as an app-side flag on top of `REVOKED`. An auditor verifies what is cryptographically signed.
 
 **Each state transition is its own Signed Envelope.** `PENDING.in_reply_to == OPEN.payload_hash`. `GRANTED.in_reply_to == PENDING.payload_hash`. The chain of envelopes *is* the proof of the lifecycle.
+
+**v1 lifecycle authority (fail closed):**
+- A Manifest envelope's `author` MUST equal its `payload.provider.id`.
+- The root `OPEN` license-request envelope's `author` MUST equal its `payload.consumer.id`.
+- Every `status.update` envelope in that license chain — including `PENDING`, `GRANTED`, `DENIED`, `SUSPENDED`, `REVOKED`, and reinstating `GRANTED` updates — MUST have `author` equal to the root `OPEN` envelope's `payload.provider_id`.
+- Resolver output is evidence supplied to the Provider, not direct authority to change v1 license state. A verifier MUST reject a resolver-authored license-chain `status.update`, even if its envelope signature is otherwise valid. Direct resolver-signed statuses are deferred until v1.1 defines explicit DID-based delegation and authorization; resolver declarations or identifiers alone do not delegate signing authority.
+
+These actor checks are required in addition to schema, payload-hash, signature, request-context, parent-link, and state-transition checks. The root-attestation mode in §3.4.1 is not a license chain and remains signed by its asserting authority.
 
 **There is no separate "status response" schema.** Status is expressed entirely through the envelope chain. A Consumer that wants the current status calls `GET {request_endpoint}/{request_id}` and receives either the latest envelope or the full chain (Provider's choice; the Provider MAY support both via `?full=true`). The latest envelope's `payload.status` field is the authoritative status; the chain is the authoritative history. Anything else would be a second source of truth, and the protocol refuses to own two sources of truth for the same fact.
 
@@ -304,7 +347,7 @@ The two modes are mutually exclusive: a payload has `request_id` **or** `subject
 
 ### 3.5 Anchors (Optional External Witnesses)
 
-An **anchor** is an optional, external reference attached to an envelope that provides third-party evidence of its existence. Anchors are pluggable — the protocol defines the interface, resolvers implement specific anchor types.
+An **anchor** is optional external evidence associated with an envelope. It is not an author assertion: `anchors` is deliberately outside the §3.1.1 author signing projection so an external resolver can append evidence after envelope creation and so an anchor need not circularly commit to a container that already contains the anchor. Anchors are pluggable — the protocol defines the interface, while resolvers implement and independently validate specific anchor types.
 
 #### Three Trust Tiers Using the Same Envelope Format
 
@@ -315,7 +358,7 @@ An **anchor** is an optional, external reference attached to an envelope that pr
 `OPEN → PENDING → GRANTED`, each envelope replies to the previous. Trust comes from signature + lifecycle order. Good for proof-of-use reviews, bilateral records between provider and consumer. The `anchors` field may still be omitted.
 
 **Tier 3 — External Anchor**
-Each envelope (or selected ones) additionally anchored to an external system — on-chain PDA, notary service, RFC 3161 timestamp, Arweave transaction. Trust comes from third-party witness. Good for high-stakes licenses, legal disputes, "this existed at time X and has not been altered since."
+Each envelope (or selected ones) may carry evidence that an external system — on-chain PDA, notary service, RFC 3161 timestamp, Arweave transaction — commits to the envelope's authenticated payload/context identity. Third-party-witness trust exists only after the applicable resolver or verifier independently validates that commitment. Mere presence of an `anchors` entry contributes no trust. Good for high-stakes licenses, legal disputes, "this existed at time X and has not been altered since."
 
 #### Anchor Structure
 
@@ -346,7 +389,10 @@ Each envelope (or selected ones) additionally anchored to an external system —
 
 - The **shape** of an anchor entry (`type` + `reference` + type-specific fields)
 - That `anchors` is an **optional array**; when present, it MUST contain at least one anchor
-- That anchors are **additive evidence**, never required for signature/hash validity
+- That anchors are outside the author signing projection: adding, removing, or changing them does not change Tier-1 payload-hash/signature validity
+- That each claimed anchor contributes **zero trust until independently validated** by the applicable resolver or verifier
+- That successful anchor validation MUST establish that the external reference commits to the envelope's authenticated payload/context identity (the fields represented by `payload_hash` and the signed §3.1.1 projection), under the anchor type's own rules
+- That validated anchors are additive external evidence, never required for signature/hash validity
 
 #### What the Protocol Does NOT Define
 
@@ -355,7 +401,7 @@ Each envelope (or selected ones) additionally anchored to an external system —
 - How to create an anchor (resolver job)
 - How to verify an anchor (resolver or verifier job)
 
-A consumer can implement any policy it wants: *"I only accept envelopes anchored on Solana mainnet"* or *"I only require signatures, anchors are nice-to-have"*. Both are valid ProofMeta usage.
+A consumer can implement any policy it wants: *"I only accept envelopes with independently validated Solana-mainnet evidence"* or *"I only require signatures and ignore anchors"*. Both are valid ProofMeta usage. A consumer MUST NOT treat an unvalidated `anchors` entry as satisfying an anchoring policy.
 
 ### 3.6 The License Request Envelope
 
@@ -705,12 +751,14 @@ Read PROOFMETA_ANWEISUNG.md before making any architectural decisions.
 ProofMeta is a protocol, not a platform.
 Everything is a Signed Envelope — no bare JSON ever.
 payload_hash MUST be sha256 over JCS (RFC 8785) canonical form of payload. Never roll your own canonicalization.
+signature MUST be ed25519 over the JCS projection of proofmeta, payload_hash, author, timestamp, and optional in_reply_to defined in §3.1.1. Never silently accept the legacy payload-hash-only signature rule.
 author MUST be a DID. v1 only guarantees verification of did:key with ed25519. Do not implement did:web or other DID methods without an explicit spec update.
 Discovery in v1 is a single HTTPS GET to a Manifest URL (typically /.well-known/proofmeta.json). Do not build, assume, or depend on a registry.
 The status lifecycle is sacred: `OPEN → PENDING → {GRANTED | DENIED}`; `DENIED` is terminal; `GRANTED → {SUSPENDED | REVOKED}`; `SUSPENDED → {GRANTED | REVOKED}`; `REVOKED` is terminal.
 SUSPENDED is temporary and reinstatable; REVOKED is permanent and terminal — never conflate them in app-layer flags.
 in_reply_to chains envelopes within a single request lifecycle — it is NOT a blockchain.
 Anchors are optional, pluggable, and never required by the protocol.
+Anchors are outside the author signing projection and contribute no trust until independently validated by their resolver or verifier.
 Never hardcode a payment provider, storage backend, chain, or anchor type.
 All external concerns go through the Resolver interface.
 ```
@@ -820,6 +868,10 @@ All v1 design questions have been resolved. New questions will be added here as 
 | D13 | Byte-level integrity for licensed items | **Optional `content_hash` on catalog items, SHOULD for static content.** Manifests and catalog results MAY include `content_hash: sha256:<hex>` on each item. Providers of static content (files, datasets, skill packs) SHOULD include it so Consumers can verify bytes delivered via the GRANTED envelope match what was licensed. Dynamic items (services, APIs, streams) SHOULD omit it. A license GRANTED against an item without `content_hash` does not bind the licensee to any specific byte sequence. See §3.3, §3.8. | 2026-04-23 |
 | D14 | How standalone policy / governance verdicts are expressed | **Reuse `status.update` as a root attestation — no new payload type.** A `status.update` may be EITHER a chained licensing verdict (`request_id`) OR a root attestation carrying `subject` + `policy` and no `request_id`, signed by the asserting authority. A `oneOf` makes the two modes mutually exclusive, so existing licensing verdicts validate unchanged and a missing `request_id` is only valid when `subject` + `policy` are present. The status enum and scope-URL mechanism (D11) are reused; no core vocabulary change. Attestation history chains use free transitions (no terminal states) with a constant subject. See §3.4.1, `docs/scope-vocabulary.md`, `docs/attestation-extension-proposal.md`. | 2026-06-21 |
 | D15 | Which capabilities define the v1 release boundary? | **v1 is the smallest useful protocol release: the free Tier-1 vertical flow with no payment, blockchain, or anchor dependency.** Payment resolver, anchor resolver, and the Tier-3 demo are v1.1 scope. Implementation checkboxes do not by themselves prove release acceptance; v1 still requires the recorded Provider/Consumer setup benchmarks and publication at the canonical spec domain. | 2026-09-01 |
+| D16 | What exactly does an envelope author sign? | **A deterministic JCS signing projection containing exactly `proofmeta`, `payload_hash`, `author`, `timestamp`, and `in_reply_to` when present.** The payload is transitively authenticated through the signed `payload_hash`; roots omit `in_reply_to` from both envelope and projection. This replaces payload-hash-only signing as a breaking pre-v1 draft change targeted for packages 0.3.0. A 0.3.0 verifier MUST fail closed and MUST NOT silently retry or accept the legacy rule as valid. See §3.1.1. | 2026-09-04 |
+| D17 | Are anchors author-signed, and when do they add trust? | **Anchors remain outside the author signing projection and are independently verified external evidence.** Their mutation does not change Tier-1 signature validity. Presence alone contributes no trust; an applicable resolver or verifier must validate that the reference commits to the authenticated payload/context identity before an anchor can satisfy policy. See §3.5. | 2026-09-04 |
+| D18 | Who has authority to author v1 manifests and license lifecycles? | **Manifest `author == payload.provider.id`; root OPEN `author == payload.consumer.id`; every license-chain `status.update` author equals the root OPEN's `payload.provider_id`.** Resolvers inform Provider decisions but are not direct lifecycle authorities in v1. Resolver-signed statuses fail closed until v1.1 defines explicit DID-based delegation/authorization. Root attestations remain outside this license-chain rule. See §3.3, §3.4, §3.4.1, §3.6. | 2026-09-04 |
+| D19 | What milestone supersedes the stale W21 checker freeze? | **A tightly bounded security-first v1 protocol-hardening milestone.** It covers envelope authenticity, lifecycle authorization, fail-closed validation, context/mode semantics, JCS/JSON-ingress conformance, reproducibility gates, and normative vectors. Payments, anchor implementation, Tier 3, registries, ERC-7521, and unrelated product work are excluded. See `docs/MILESTONE-SCOPE-FREEZE.md`. | 2026-09-04 |
 
 ### Small Decisions (2026-04-21 cleanup)
 
