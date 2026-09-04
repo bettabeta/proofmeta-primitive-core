@@ -39,8 +39,6 @@ async function validManifestEnvelope() {
 }
 
 async function validRequestChain() {
-  // Provider signs the manifest and the status updates; consumer signs
-  // the OPEN request.
   const provider = await generateKeyPair();
   const consumer = await generateKeyPair();
   const requestId = "01850000-0000-7000-8000-000000000001";
@@ -90,7 +88,7 @@ async function validRequestChain() {
     in_reply_to: pendingEnv.payload_hash,
   });
 
-  return [openEnv, pendingEnv, grantedEnv];
+  return Object.assign([openEnv, pendingEnv, grantedEnv], { provider, consumer });
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────
@@ -196,14 +194,19 @@ test("valid chain: OPEN → PENDING → GRANTED verifies end-to-end", async () =
 
 test("broken in_reply_to in chain is detected", async () => {
   const chain = await validRequestChain();
-  // Replace the middle envelope's in_reply_to with a plausible-looking hash
-  // that doesn't match the previous payload_hash.
-  const middle = { ...chain[1], in_reply_to: "sha256:" + "f".repeat(64) };
+  const { provider } = chain;
+
+  // Re-sign the middle envelope with a valid key but wrong in_reply_to.
+  const middle = await createEnvelope({
+    payload: chain[1].payload,
+    author: provider.did,
+    privateKey: provider.privateKey,
+    in_reply_to: "sha256:" + "f".repeat(64),
+  });
+
   const broken = [chain[0], middle, chain[2]];
   const report = await validateInput(broken);
   assert.equal(report.ok, false);
-  // individual envelope is still cryptographically valid — failure lives
-  // on the chain layer.
   assert.equal(report.envelopes[1].schema.ok, true);
   assert.equal(report.envelopes[1].signature.ok, true);
   assert.equal(report.chain.ok, false);

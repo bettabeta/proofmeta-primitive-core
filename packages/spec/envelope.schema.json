@@ -35,23 +35,23 @@
     },
     "signature": {
       "type": "string",
-      "pattern": "^ed25519:",
-      "description": "ed25519 signature over the payload_hash string, produced by the author's key."
+      "pattern": "^ed25519:[a-f0-9]{128}$",
+      "description": "Ed25519 signature over the UTF-8 JCS serialization of exactly proofmeta, payload_hash, author, timestamp, and in_reply_to when present. Lowercase hex; anchors are excluded."
     },
     "timestamp": {
       "type": "string",
       "format": "date-time",
-      "description": "ISO 8601 UTC timestamp asserted by the author."
+      "description": "ISO 8601 UTC timestamp asserted and signed by the author."
     },
     "in_reply_to": {
       "type": "string",
       "pattern": "^sha256:[a-f0-9]{64}$",
-      "description": "payload_hash of the logically previous envelope in the same lifecycle. Required for status updates and reviews. Omitted for roots (manifest, license.request)."
+      "description": "Signed payload_hash of the logically previous envelope in the same lifecycle. Required for status updates and reviews. Omitted for roots (manifest, license.request) and from their signing projections."
     },
     "anchors": {
       "type": "array",
       "minItems": 1,
-      "description": "Optional external anchors. MAY be omitted entirely; when present, MUST contain at least one anchor. See §3.5.",
+      "description": "Optional independently verified external anchors, excluded from the author's signing projection. MAY be omitted entirely; when present, MUST contain at least one anchor. See §3.5.",
       "items": {
         "$ref": "#/definitions/anchor"
       }

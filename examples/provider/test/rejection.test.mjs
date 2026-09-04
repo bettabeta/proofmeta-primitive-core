@@ -205,7 +205,7 @@ test("rejects consumer.id mismatch with envelope.author", async () => {
   const res = await postRequest(env);
   assert.equal(res.status, 400);
   const { error } = await res.json();
-  assert.match(error, /consumer\.id must match envelope\.author/);
+  assert.match(error, /OPEN author must equal payload.consumer.id/);
 });
 
 test("rejects unknown license_type", async () => {

@@ -33,7 +33,7 @@ const envelope = await createEnvelope({
   privateKey: kp.privateKey,
 });
 
-// Verify schema version + payload_hash + signature
+// Verify version + payload_hash + projection signature + core actor authority
 const v = await verifyEnvelope(envelope);
 // → { ok: true } or { ok: false, reason: "..." }
 
@@ -43,13 +43,14 @@ const c = await verifyChain([open, pending, granted]);
 
 ## What gets verified
 
-`verifyEnvelope` checks three things:
+`verifyEnvelope` checks four things:
 
 1. `proofmeta: "1.0"`.
 2. `payload_hash === sha256(JCS(payload))` — recomputed from scratch, not trusted from the envelope.
-3. `signature` is a valid ed25519 signature over the `payload_hash` string.
+3. `signature` is a valid Ed25519 signature over the UTF-8 JCS serialization of exactly `proofmeta`, `payload_hash`, `author`, `timestamp`, and `in_reply_to` when present. `anchors` are excluded.
+4. A manifest's `author` equals `payload.provider.id`, and a root OPEN license request's `author` equals `payload.consumer.id`.
 
-`verifyChain` additionally checks that every `in_reply_to` matches the prior envelope's `payload_hash`, the root has no `in_reply_to`, all `request_id`s in the chain agree, and status transitions follow the allowed lifecycle (including `SUSPENDED` / reinstatement). Use `isCurrentlyValid(chain)` for read-time validity; expiry is derived from optional `valid_until` on `GRANTED` envelopes, not a stored status.
+`verifyChain` additionally checks that every `in_reply_to` matches the prior envelope's `payload_hash`, the root has no `in_reply_to`, all `request_id`s in the chain agree, every license-chain status update is authored by the root OPEN's `payload.provider_id`, and status transitions follow the allowed lifecycle (including `SUSPENDED` / reinstatement). Root attestations retain their asserting authority semantics. Use `isCurrentlyValid(chain)` for read-time validity; expiry is derived from optional `valid_until` on `GRANTED` envelopes, not a stored status.
 
 ## Canonicalization
 

@@ -94,7 +94,7 @@ test("createEnvelope + verifyEnvelope roundtrip (manifest)", async () => {
 test("createEnvelope includes anchors when supplied", async () => {
   const kp = await generateKeyPair();
   const env = await createEnvelope({
-    payload: { type: "manifest" },
+    payload: { type: "manifest", provider: { id: kp.did } },
     author: kp.did,
     privateKey: kp.privateKey,
     anchors: [{ type: "rfc3161", reference: "blob:abc", authority: "https://tsa.test" }],
@@ -274,7 +274,7 @@ test("verifyChain rejects mismatched request_id", async () => {
 test("verifyChain rejects root with in_reply_to", async () => {
   const kp = await generateKeyPair();
   const env = await createEnvelope({
-    payload: { type: "manifest" },
+    payload: { type: "manifest", provider: { id: kp.did } },
     author: kp.did,
     privateKey: kp.privateKey,
     in_reply_to: "sha256:" + "a".repeat(64),

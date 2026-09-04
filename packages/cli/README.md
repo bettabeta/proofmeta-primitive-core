@@ -22,8 +22,8 @@ The input file can be a single envelope object **or** an array of envelopes (tre
 
 1. **JSON Schema compliance** — the envelope, and the payload dispatched on `payload.type` (`manifest` | `license.request` | `status.update`).
 2. **`payload_hash` correctness** — recomputed from scratch as `sha256(JCS(payload))` using the reference SDK, then compared to what the envelope claims.
-3. **Signature validity** — ed25519 signature over the `payload_hash` string, verified against the public key resolved from `author` (v1 requires `did:key` with ed25519).
-4. **Chain integrity** (array input) — every `in_reply_to` matches the previous envelope's `payload_hash`; the root has no `in_reply_to`; all `request_id`s in the chain agree.
+3. **Signature and actor validity** — Ed25519 signature over the UTF-8 JCS projection of `proofmeta`, `payload_hash`, `author`, `timestamp`, and optional `in_reply_to` (excluding `anchors`), plus manifest Provider and OPEN Consumer author checks.
+4. **Chain integrity and authority** (array input) — every `in_reply_to` matches the previous envelope's `payload_hash`; the root has no `in_reply_to`; all `request_id`s agree; and every license status is authored by the root OPEN's Provider.
 
 ## Example
 
