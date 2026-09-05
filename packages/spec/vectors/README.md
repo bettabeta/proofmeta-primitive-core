@@ -6,7 +6,7 @@ This directory is the language-neutral conformance corpus for the v0.3.0 envelop
 
 ## File format
 
-There are exactly 12 vector files, one case per file. `keys.json` is fixture metadata, not a vector. Every vector uses exactly this top-level shape:
+There are exactly 15 vector files, one case per file. `keys.json` is fixture metadata, not a vector. Every vector uses exactly this top-level shape:
 
 ```json
 {
@@ -33,7 +33,7 @@ Invalid cases use only a stable reason code:
 }
 ```
 
-Reason codes classify existing v0.3.0 SDK failures; they do not add protocol semantics or change the SDK API.
+Reason codes classify SDK failures; they do not change the SDK API.
 
 ## Deterministic keys and signatures
 
@@ -51,6 +51,9 @@ All timestamps, payloads, hashes, and signatures are fixed. D16 signatures are E
 | `OPEN_AUTHOR_MISMATCH` | `OPEN author must equal payload.consumer.id` |
 | `STATUS_AUTHOR_MISMATCH` | `envelope[1] license status author must equal root OPEN payload.provider_id` |
 | `MISSING_PROVIDER_ID` | `root OPEN envelope must have a valid provider_id DID string` |
+| `ATTESTATION_POLICY_REQUIRED` | `envelope[0]: attestation policy.ref must be a non-empty string` |
+| `ATTESTATION_AUTHOR_MISMATCH` | `envelope[1]: attestation author must equal root author` |
+| `STATUS_UPDATE_MODE_MIXED` | `envelope[0]: status.update must use exactly one mode: request_id only (Mode A) or subject + policy only (Mode B)` |
 
 ## Corpus inventory
 
@@ -68,6 +71,9 @@ All timestamps, payloads, hashes, and signatures are fixed. D16 signatures are E
 | `10-invalid-d18-open-author-mismatch.json` | `invalid-d18-open-author-mismatch` | envelope | `OPEN_AUTHOR_MISMATCH` |
 | `11-invalid-d18-attacker-signed-status.json` | `invalid-d18-attacker-signed-status` | chain | `STATUS_AUTHOR_MISMATCH` |
 | `12-invalid-d18-root-open-missing-provider-id.json` | `invalid-d18-root-open-missing-provider-id` | chain | `MISSING_PROVIDER_ID` |
+| `13-invalid-attestation-missing-policy.json` | `invalid-attestation-missing-policy` | chain | `ATTESTATION_POLICY_REQUIRED` |
+| `14-invalid-attestation-changed-author.json` | `invalid-attestation-changed-author` | chain | `ATTESTATION_AUTHOR_MISMATCH` |
+| `15-invalid-status-update-mixed-mode.json` | `invalid-status-update-mixed-mode` | chain | `STATUS_UPDATE_MODE_MIXED` |
 
 ## Consuming the corpus outside TypeScript
 

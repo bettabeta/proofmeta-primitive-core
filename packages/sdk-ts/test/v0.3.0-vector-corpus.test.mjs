@@ -17,6 +17,12 @@ const reasonByCode = Object.freeze({
   STATUS_AUTHOR_MISMATCH:
     "envelope[1] license status author must equal root OPEN payload.provider_id",
   MISSING_PROVIDER_ID: "root OPEN envelope must have a valid provider_id DID string",
+  ATTESTATION_POLICY_REQUIRED:
+    "envelope[0]: attestation policy.ref must be a non-empty string",
+  ATTESTATION_AUTHOR_MISMATCH:
+    "envelope[1]: attestation author must equal root author",
+  STATUS_UPDATE_MODE_MIXED:
+    "envelope[0]: status.update must use exactly one mode: request_id only (Mode A) or subject + policy only (Mode B)",
 });
 
 test("ProofMeta v0.3.0 corpus vectors match SDK verification results", async () => {
@@ -24,7 +30,7 @@ test("ProofMeta v0.3.0 corpus vectors match SDK verification results", async () 
     .filter((name) => name.endsWith(".json") && name !== "keys.json")
     .sort();
 
-  assert.equal(vectorFiles.length, 12, "the v0.3.0 corpus must contain exactly 12 vectors");
+  assert.equal(vectorFiles.length, 15, "the corpus must contain exactly 15 vectors");
 
   const seenIds = new Set();
   for (const file of vectorFiles) {

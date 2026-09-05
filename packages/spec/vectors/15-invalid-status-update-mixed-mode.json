@@ -1,0 +1,28 @@
+{
+  "id": "invalid-status-update-mixed-mode",
+  "description": "A signed status.update combining Mode A request_id with Mode B fields is invalid.",
+  "input": [
+    {
+      "proofmeta": "1.0",
+      "payload": {
+        "type": "status.update",
+        "request_id": "018f0000-0000-7000-8000-000000000001",
+        "subject": {
+          "id": "vector-agent@host"
+        },
+        "policy": {
+          "ref": "https://proofmeta.org/policies/vector"
+        },
+        "status": "GRANTED"
+      },
+      "payload_hash": "sha256:6de2a6646a9c5ed905c46cd49a461c3d2f678facfe9a1b8ed98226a5fa4c3293",
+      "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+      "signature": "ed25519:e8735eab4b1ca03c564e8900ca6ea41513c9b62d711d06c0522798133d9f4c071d88a228b37ecebb4cf9c76f8ec3de87285a10f829c409fab069d53bd2c91e0e",
+      "timestamp": "2026-09-04T10:13:00.000Z"
+    }
+  ],
+  "expect": {
+    "valid": false,
+    "reason": "STATUS_UPDATE_MODE_MIXED"
+  }
+}

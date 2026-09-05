@@ -250,9 +250,8 @@ export async function updateStatus<B extends PayloadBase & { request_id: string 
  * quarantined, REVOKED = must be removed). The asserting authority signs with
  * its own key. See §3.4 Mode B and docs/attestation-extension-proposal.md.
  *
- * Note: attestation *history chains* (re-evaluations linked via in_reply_to)
- * are not yet validated by verifyChain — single attestations verify via
- * verifyEnvelope today.
+ * Attestation history chains (re-evaluations linked via in_reply_to) are
+ * validated by verifyChain.
  */
 export async function createAttestation(
   args: {
