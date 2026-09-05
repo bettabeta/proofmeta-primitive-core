@@ -1,0 +1,27 @@
+{
+  "id": "invalid-d18-open-author-mismatch",
+  "description": "A validly signed OPEN fails authority checks when author differs from consumer.id.",
+  "input": {
+    "proofmeta": "1.0",
+    "payload": {
+      "type": "license.request",
+      "request_id": "018f0000-0000-7000-8000-000000000001",
+      "consumer": {
+        "id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd"
+      },
+      "provider_id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+      "item_id": "vector-item",
+      "license_type": "free",
+      "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "status": "OPEN"
+    },
+    "payload_hash": "sha256:4d0edb98a7a1c9a578e287c39c13b35ae0f82fc88bf975677a2537e09acae029",
+    "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+    "signature": "ed25519:4a963da0762da5323ee75c2a19fd513d8876244af9cea9859b16e1fcbccdb31712f8cc9df9cc70cdfebde3d43551ec9966528f1e7b0eff2a4216544486ddea0e",
+    "timestamp": "2026-09-04T10:05:00.000Z"
+  },
+  "expect": {
+    "valid": false,
+    "reason": "OPEN_AUTHOR_MISMATCH"
+  }
+}

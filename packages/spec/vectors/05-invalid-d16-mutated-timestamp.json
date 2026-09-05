@@ -1,0 +1,34 @@
+{
+  "id": "invalid-d16-mutated-timestamp",
+  "description": "Changing the signed timestamp without resigning invalidates the D16 signature.",
+  "input": {
+    "proofmeta": "1.0",
+    "payload": {
+      "type": "manifest",
+      "provider": {
+        "id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+        "name": "ProofMeta Vector Provider"
+      },
+      "request_endpoint": "https://provider.example/requests",
+      "catalog_endpoint": "https://provider.example/catalog",
+      "license_types": [
+        {
+          "id": "free",
+          "terms_url": "https://provider.example/terms/free",
+          "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "scope": [
+            "non-commercial"
+          ]
+        }
+      ]
+    },
+    "payload_hash": "sha256:f468a5f0181ea116118ea01da71ccfe8409a6f741e50f6818361b1dbfd87404d",
+    "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+    "signature": "ed25519:b8d7834cc47e1aca1abc86ef4b284ed1629d872d656bf99eca4fa3a5f2a133957eb1d2f3c254117cdb70b917921ec4e443f17550292eee369fd0c8e522b5360f",
+    "timestamp": "2026-09-04T10:00:01.000Z"
+  },
+  "expect": {
+    "valid": false,
+    "reason": "INVALID_SIGNATURE"
+  }
+}

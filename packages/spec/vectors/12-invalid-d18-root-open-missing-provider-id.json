@@ -1,0 +1,28 @@
+{
+  "id": "invalid-d18-root-open-missing-provider-id",
+  "description": "A validly signed root OPEN without provider_id fails closed during chain verification.",
+  "input": [
+    {
+      "proofmeta": "1.0",
+      "payload": {
+        "type": "license.request",
+        "request_id": "018f0000-0000-7000-8000-000000000001",
+        "consumer": {
+          "id": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2"
+        },
+        "item_id": "vector-item",
+        "license_type": "free",
+        "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "status": "OPEN"
+      },
+      "payload_hash": "sha256:b12548aaece6d18cd00630c8cd7226894b544a141d767d08e6a68a4d50ee2ea4",
+      "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+      "signature": "ed25519:a90f37ea3831a1f6813bd1bf5b9e480201860cc3f19d2e1d257e1df0fcab4663234d0a725d4f585553cc6ad553a1cb606213d82bf2485b3c4ae8327d1885d303",
+      "timestamp": "2026-09-04T10:06:00.000Z"
+    }
+  ],
+  "expect": {
+    "valid": false,
+    "reason": "MISSING_PROVIDER_ID"
+  }
+}

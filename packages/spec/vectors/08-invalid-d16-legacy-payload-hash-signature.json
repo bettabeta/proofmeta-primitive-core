@@ -1,0 +1,27 @@
+{
+  "id": "invalid-d16-legacy-payload-hash-signature",
+  "description": "A legacy signature over payload_hash alone is not accepted by the v0.3.0 verifier.",
+  "input": {
+    "proofmeta": "1.0",
+    "payload": {
+      "type": "license.request",
+      "request_id": "018f0000-0000-7000-8000-000000000001",
+      "consumer": {
+        "id": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2"
+      },
+      "provider_id": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+      "item_id": "vector-item",
+      "license_type": "free",
+      "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "status": "OPEN"
+    },
+    "payload_hash": "sha256:99b6cf005fe9f24d08373323adef4d0730b275e4e0970fc54dfb847784f3a448",
+    "author": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+    "signature": "ed25519:28dada7285aa454bb5c857b6adb7b1ac558007c254f119949c634ed1b3f62ced153d245f3dc105516b0028a35c9637b22ccd588db0227b2097272f4cb98b490c",
+    "timestamp": "2026-09-04T10:01:00.000Z"
+  },
+  "expect": {
+    "valid": false,
+    "reason": "INVALID_SIGNATURE"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "invalid-d18-manifest-author-mismatch",
+  "description": "A validly signed manifest fails authority checks when author differs from provider.id.",
+  "input": {
+    "proofmeta": "1.0",
+    "payload": {
+      "type": "manifest",
+      "provider": {
+        "id": "did:key:z6MkhFwXNFWosLeugvSf4wcL9t3uuRXueGSFTRgSvHhWj5G2",
+        "name": "ProofMeta Vector Provider"
+      },
+      "request_endpoint": "https://provider.example/requests",
+      "catalog_endpoint": "https://provider.example/catalog",
+      "license_types": [
+        {
+          "id": "free",
+          "terms_url": "https://provider.example/terms/free",
+          "terms_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "scope": [
+            "non-commercial"
+          ]
+        }
+      ]
+    },
+    "payload_hash": "sha256:327ae5445fbc2350367d6055444150e36a0444b80f35774fdd11663d2cf7fb51",
+    "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+    "signature": "ed25519:e96f27255f7c3359e2ba0d56a2948291696895f60b1030069ea75f3228b3727d7a55d62537ca8b9bd32df0caf9260111c365a53e50294a08b1eb9236b2354a00",
+    "timestamp": "2026-09-04T10:04:00.000Z"
+  },
+  "expect": {
+    "valid": false,
+    "reason": "MANIFEST_AUTHOR_MISMATCH"
+  }
+}

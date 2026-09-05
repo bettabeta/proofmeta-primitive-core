@@ -1,0 +1,18 @@
+{
+  "id": "invalid-d16-missing-timestamp",
+  "description": "An omitted timestamp fails closed even when the signature matches the projection with no timestamp.",
+  "input": {
+    "proofmeta": "1.0",
+    "payload": {
+      "type": "test.vector",
+      "value": "missing timestamp"
+    },
+    "payload_hash": "sha256:86be529fdef55b10644877718220ad361949dffe48db3c8c4c1061dbb8748294",
+    "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+    "signature": "ed25519:c877d7238ba07fff1efb126b6288aa33a0141dc51c0017294cfc70477dfcdd82daf4e1ce7d61b8744ac639b2314bf9158d0d3db41765e9fcee13dcea39758c04"
+  },
+  "expect": {
+    "valid": false,
+    "reason": "MISSING_TIMESTAMP"
+  }
+}
