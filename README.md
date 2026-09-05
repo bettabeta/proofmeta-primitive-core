@@ -37,14 +37,14 @@ OPEN → PENDING → GRANTED | DENIED
                  SUSPENDED → REVOKED (escalate)
 ```
 
-## Two kinds of verdict: licenses and attestations
+## License verdicts and attestations
 
-The same signed status serves two uses (one primitive, one toolchain — see §3.4.1):
+A signed status can be linked to a request or issued independently:
 
-- **License verdict** — a verdict *forward*, answering a request: "you asked to license this item → `GRANTED`."
-- **Attestation** — a standalone verdict an authority asserts about a `subject` against a `policy`, with **no prior request**: "this AI tool, against the EU policy → `DENIED`." Re-evaluations link into a signed, tamper-evident verdict history.
+- **License verdict** — answers a request, such as a request that results in `GRANTED`.
+- **Attestation** — an authority asserts a verdict about a `subject` against a `policy`, with no prior request. Later evaluations can link into a signed, tamper-evident verdict history.
 
-This makes ProofMeta the permission *and* the proof layer: licensing says *you may*; attestations prove *the state / that the terms were honored*. Governance and compliance (e.g. enterprise AI asset management) use attestations; commercial licensing uses both.
+Profiles for specific domains live in separate `proofmeta-profile-*` repositories.
 
 ## Quick Start
 
