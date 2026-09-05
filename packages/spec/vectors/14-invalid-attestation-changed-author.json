@@ -1,0 +1,45 @@
+{
+  "id": "invalid-attestation-changed-author",
+  "description": "A signed attestation history that changes author after the root is invalid.",
+  "input": [
+    {
+      "proofmeta": "1.0",
+      "payload": {
+        "type": "status.update",
+        "subject": {
+          "id": "vector-agent@host"
+        },
+        "policy": {
+          "ref": "https://proofmeta.org/policies/vector"
+        },
+        "status": "GRANTED"
+      },
+      "payload_hash": "sha256:9b54053f6dfb11d0e37b98223957c0bc06b6443014be438c69ea64c44e63613d",
+      "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+      "signature": "ed25519:ef3f78630452dfc0adfb745485bd3236d0d3e03588accb35c301a035ff222388497cf611c383424742c656208fbddf5797ff02d7d552f858ced8eb389d0ede04",
+      "timestamp": "2026-09-04T10:11:00.000Z"
+    },
+    {
+      "proofmeta": "1.0",
+      "payload": {
+        "type": "status.update",
+        "subject": {
+          "id": "vector-agent@host"
+        },
+        "policy": {
+          "ref": "https://proofmeta.org/policies/vector"
+        },
+        "status": "DENIED"
+      },
+      "payload_hash": "sha256:52bf0605af5b5cabafffd4a71ad80a84be2baa413df96d653ab10449880a1704",
+      "author": "did:key:z6Mkgxj2R3HLtQRpPnvfvpuKEceSqf3tZHBjdmZ3fFz3JHGG",
+      "signature": "ed25519:29b8f4abf2edb3b3ad4f0266f55f68a3bd3dadc2a6c24915e4844682a982525662466e06b6ff1fb82c4e806decffd2d4f7a625623151f6b44088374b9481ea03",
+      "timestamp": "2026-09-04T10:12:00.000Z",
+      "in_reply_to": "sha256:9b54053f6dfb11d0e37b98223957c0bc06b6443014be438c69ea64c44e63613d"
+    }
+  ],
+  "expect": {
+    "valid": false,
+    "reason": "ATTESTATION_AUTHOR_MISMATCH"
+  }
+}

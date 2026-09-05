@@ -1,7 +1,7 @@
 {
   "name": "@proofmeta/spec",
-  "version": "0.3.0",
-  "description": "ProofMeta v1 JSON Schemas — canonical machine-readable spec (envelope + payload schemas).",
+  "version": "0.4.0",
+  "description": "ProofMeta v1 JSON Schemas \u2014 canonical machine-readable spec (envelope + payload schemas).",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./index.mjs",

@@ -1,0 +1,24 @@
+{
+  "id": "invalid-attestation-missing-policy",
+  "description": "A signed Mode B attestation without policy is invalid.",
+  "input": [
+    {
+      "proofmeta": "1.0",
+      "payload": {
+        "type": "status.update",
+        "subject": {
+          "id": "vector-agent@host"
+        },
+        "status": "GRANTED"
+      },
+      "payload_hash": "sha256:317d0f11e067afe21dfba53696f5c5efdcf135d145ec24d68ef8e65e4f2f1899",
+      "author": "did:key:z6MkehRgf7yJbgaGfYsdoAsKdBPE3dj2CYhowQdcjqSJgvVd",
+      "signature": "ed25519:9f54d7eda22f23eb5461bcec07be35cbbf30365b96bb88dec2f487c30271f49f663b1edadea970a6200efa3552427b758ab256509841601727b34d53f286640d",
+      "timestamp": "2026-09-04T10:10:00.000Z"
+    }
+  ],
+  "expect": {
+    "valid": false,
+    "reason": "ATTESTATION_POLICY_REQUIRED"
+  }
+}

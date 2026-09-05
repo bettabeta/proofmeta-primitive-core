@@ -136,6 +136,28 @@ export function validateStatusTransitions(
 
   for (let i = 1; i < envelopes.length; i++) {
     const env = envelopes[i]!;
+    if (env.payload.type === "status.update") {
+      const p = env.payload as {
+        request_id?: unknown;
+        subject?: unknown;
+        policy?: unknown;
+      };
+      if (
+        p.request_id !== undefined &&
+        (p.subject !== undefined || p.policy !== undefined)
+      ) {
+        return {
+          ok: false,
+          reason: `envelope[${i}]: status.update must use exactly one mode: request_id only (Mode A) or subject + policy only (Mode B)`,
+        };
+      }
+      if (typeof p.request_id !== "string" || p.request_id.length === 0) {
+        return {
+          ok: false,
+          reason: `envelope[${i}]: license chain requires Mode A status.update with a non-empty request_id and no subject or policy`,
+        };
+      }
+    }
     const t = validateTransition(current, env);
     if (!t.ok) {
       return {
@@ -158,21 +180,9 @@ export function validateStatusTransitions(
 
 // ── Attestation chains (policy/governance verdict history) ─────────────────
 
-/**
- * Whether an envelope is a ROOT ATTESTATION status.update (Mode B): a
- * status.update carrying `subject` and no `request_id`. See §3.4.
- */
+/** Whether an envelope is a root status.update attestation candidate. */
 export function isAttestationEnvelope(envelope: Envelope<AnyPayload>): boolean {
-  const p = envelope.payload as {
-    type?: string;
-    subject?: unknown;
-    request_id?: unknown;
-  };
-  return (
-    p.type === "status.update" &&
-    p.subject !== undefined &&
-    p.request_id === undefined
-  );
+  return envelope.payload.type === "status.update";
 }
 
 /**
@@ -184,8 +194,9 @@ export function isAttestationEnvelope(envelope: Envelope<AnyPayload>): boolean {
  * a subject may move freely between GRANTED / DENIED / SUSPENDED / REVOKED as
  * re-scans find it compliant or not. There are therefore no illegal
  * transitions and no terminal states. The invariants are:
- *   - every envelope is a status.update attestation (subject, no request_id);
+ *   - every envelope is a Mode B status.update (subject + policy, no request_id);
  *   - the subject.id is constant across the whole chain;
+ *   - the author is constant across the whole chain;
  *   - each status is a valid (non-OPEN) verdict;
  *   - SUSPENDED / REVOKED carry a reason (same as licensing).
  *
@@ -201,21 +212,62 @@ export function validateAttestationChain(
   }
 
   let subjectId: string | undefined;
+  let rootAuthor: string | undefined;
 
   for (let i = 0; i < envelopes.length; i++) {
     const env = envelopes[i]!;
-    if (!isAttestationEnvelope(env)) {
+    if (env.payload.type !== "status.update") {
       return {
         ok: false,
-        reason: `envelope[${i}]: attestation chain must contain only root-attestation status.update envelopes (subject, no request_id)`,
+        reason: `envelope[${i}]: attestation chain must contain only status.update envelopes`,
       };
     }
 
     const p = env.payload as {
+      request_id?: unknown;
       subject?: { id?: unknown };
+      policy?: unknown;
       status?: unknown;
       reason?: unknown;
     };
+
+    if (
+      p.request_id !== undefined &&
+      (p.subject !== undefined || p.policy !== undefined)
+    ) {
+      return {
+        ok: false,
+        reason: `envelope[${i}]: status.update must use exactly one mode: request_id only (Mode A) or subject + policy only (Mode B)`,
+      };
+    }
+
+    if (p.request_id !== undefined || p.subject === undefined) {
+      return {
+        ok: false,
+        reason: `envelope[${i}]: attestation chain requires Mode B status.update (subject + policy, no request_id)`,
+      };
+    }
+
+    const policy = p.policy;
+    const policyRef =
+      typeof policy === "object" && policy !== null && !Array.isArray(policy)
+        ? (policy as { ref?: unknown }).ref
+        : undefined;
+    if (typeof policyRef !== "string" || policyRef.length === 0) {
+      return {
+        ok: false,
+        reason: `envelope[${i}]: attestation policy.ref must be a non-empty string`,
+      };
+    }
+
+    if (i === 0) {
+      rootAuthor = env.author;
+    } else if (env.author !== rootAuthor) {
+      return {
+        ok: false,
+        reason: `envelope[${i}]: attestation author must equal root author`,
+      };
+    }
 
     const id = p.subject?.id;
     if (typeof id !== "string" || id.length === 0) {

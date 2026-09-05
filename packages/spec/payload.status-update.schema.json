@@ -9,11 +9,18 @@
   "oneOf": [
     {
       "title": "Mode A — chained verdict (license lifecycle)",
-      "required": ["request_id"]
+      "required": ["request_id"],
+      "not": {
+        "anyOf": [
+          { "required": ["subject"] },
+          { "required": ["policy"] }
+        ]
+      }
     },
     {
       "title": "Mode B — root attestation (policy/governance verdict)",
-      "required": ["subject", "policy"]
+      "required": ["subject", "policy"],
+      "not": { "required": ["request_id"] }
     }
   ],
   "properties": {
