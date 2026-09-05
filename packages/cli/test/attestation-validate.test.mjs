@@ -10,7 +10,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { generateKeyPair, createAttestation } from "@proofmeta/sdk-ts";
+import { generateKeyPair, createEnvelope, createAttestation } from "@proofmeta/sdk-ts";
 import { validateInput } from "../src/validate.mjs";
 
 test("validate accepts a single root attestation", async () => {
@@ -47,4 +47,24 @@ test("validate accepts an attestation history chain", async () => {
   const r = await validateInput([e1, e2, e3]);
   assert.equal(r.ok, true, JSON.stringify({ chain: r.chain, transitions: r.transitions }));
   assert.equal(r.transitions.ok, true);
+});
+
+test("validate rejects a signed status.update containing request_id and subject", async () => {
+  const authority = await generateKeyPair();
+  const envelope = await createEnvelope({
+    payload: {
+      type: "status.update",
+      request_id: "01JZKYH3M2GQ3XN6F1ABCDEFGH",
+      subject: { id: "claude-code@host" },
+      status: "GRANTED",
+    },
+    author: authority.did,
+    privateKey: authority.privateKey,
+  });
+
+  const r = await validateInput(envelope);
+  assert.equal(r.envelopes[0].hash.ok, true);
+  assert.equal(r.envelopes[0].signature.ok, true);
+  assert.equal(r.envelopes[0].schema.ok, false, "request_id and subject must not share a status.update mode");
+  assert.equal(r.ok, false);
 });

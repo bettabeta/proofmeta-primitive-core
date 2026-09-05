@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 
 import {
   generateKeyPair,
+  createEnvelope,
   createAttestation,
   verifyEnvelope,
   verifyChain,
@@ -133,6 +134,60 @@ test("verifyChain rejects a history where the subject changes mid-chain", async 
 
   const v = await verifyChain([a, b]);
   assert.equal(v.ok, false, "subject must be constant across an attestation chain");
+});
+
+test("verifyChain rejects signed attestations missing policy or policy.ref", async () => {
+  const authority = await generateKeyPair();
+  const payloads = [
+    {
+      type: "status.update",
+      subject: { id: "claude-code@host-42" },
+      status: "GRANTED",
+    },
+    {
+      type: "status.update",
+      subject: { id: "claude-code@host-42" },
+      policy: {},
+      status: "GRANTED",
+    },
+  ];
+
+  for (const payload of payloads) {
+    const attestation = await createEnvelope({
+      payload,
+      author: authority.did,
+      privateKey: authority.privateKey,
+    });
+    const v = await verifyChain([attestation]);
+    assert.equal(v.ok, false, "attestation policy.ref must be required");
+  }
+});
+
+test("verifyChain rejects an attestation history whose author changes", async () => {
+  const rootAuthority = await generateKeyPair();
+  const laterAuthority = await generateKeyPair();
+  const subject = { id: "claude-code@host-42" };
+  const policy = { ref: "https://pandr.de/policy/eu-only" };
+
+  const root = await createAttestation({
+    subject,
+    policy,
+    status: "GRANTED",
+    author: rootAuthority.did,
+    privateKey: rootAuthority.privateKey,
+  });
+  const later = await createAttestation({
+    subject,
+    policy,
+    status: "DENIED",
+    author: laterAuthority.did,
+    privateKey: laterAuthority.privateKey,
+    in_reply_to: root.payload_hash,
+    extras: { reason: "authority changed" },
+  });
+
+  const v = await verifyChain([root, later]);
+  assert.equal(v.ok, false, "attestation author must be constant across the chain");
 });
 
 test("validateAttestationChain rejects mixing a licensing verdict into an attestation chain", async () => {
