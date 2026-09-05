@@ -1,6 +1,6 @@
-# ProofMeta v0.3.0 test-vector corpus
+# ProofMeta v0.4.0 test-vector corpus
 
-This directory is the language-neutral conformance corpus for the v0.3.0 envelope-authenticity (D16) and lifecycle-authority (D18) rules in `PROOFMETA_ANWEISUNG.md`.
+This directory is the language-neutral conformance corpus for the v0.4.0 envelope-authenticity (D16) and lifecycle-authority (D18) rules in `PROOFMETA_ANWEISUNG.md`.
 
 > **WARNING — TEST KEYS ONLY:** `keys.json` contains public deterministic private Ed25519 seeds. Never use these keys for production, identity, value, secrets, or any non-test purpose.
 
@@ -39,11 +39,11 @@ Reason codes classify SDK failures; they do not change the SDK API.
 
 `keys.json` contains exactly one 32-byte Ed25519 seed for each role: `provider`, `consumer`, and `attacker`. Each entry also records the derived 32-byte public key and `did:key` identifier. Implementations should derive the public key from the seed, then confirm both the recorded public key and DID before using a fixture.
 
-All timestamps, payloads, hashes, and signatures are fixed. D16 signatures are Ed25519 signatures over the UTF-8 bytes of the RFC 8785 JCS object containing exactly `proofmeta`, `payload_hash`, `author`, `timestamp`, and `in_reply_to` when present. The legacy vector instead signs the UTF-8 `payload_hash` string to prove that v0.3.0 does not downgrade.
+All timestamps, payloads, hashes, and signatures are fixed. D16 signatures are Ed25519 signatures over the UTF-8 bytes of the RFC 8785 JCS object containing exactly `proofmeta`, `payload_hash`, `author`, `timestamp`, and `in_reply_to` when present. The legacy vector instead signs the UTF-8 `payload_hash` string to prove that v0.4.0 does not downgrade.
 
 ## Reason codes
 
-| Reason code | Existing v0.3.0 SDK result |
+| Reason code | Existing v0.4.0 SDK result |
 | --- | --- |
 | `INVALID_SIGNATURE` | `invalid ed25519 signature` |
 | `MISSING_TIMESTAMP` | `envelope.timestamp must be a string` |
@@ -87,4 +87,4 @@ A non-TypeScript implementation can consume the corpus without SDK-specific help
 6. For chains, verify links, lifecycle semantics, and D18 signer authority.
 7. Compare validity with `expect.valid`; for invalid cases, map the local diagnostic to the documented corpus reason code in `expect.reason`.
 
-The TypeScript reference runner is the single test named `ProofMeta v0.3.0 corpus vectors match SDK verification results` in `packages/sdk-ts/test/v0.3.0-vector-corpus.test.mjs`.
+The TypeScript reference runner is the single test named `ProofMeta v0.4.0 corpus vectors match SDK verification results` in `packages/sdk-ts/test/v0.4.0-vector-corpus.test.mjs`.

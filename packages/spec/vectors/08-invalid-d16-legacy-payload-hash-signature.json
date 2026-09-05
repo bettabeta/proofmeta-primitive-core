@@ -1,6 +1,6 @@
 {
   "id": "invalid-d16-legacy-payload-hash-signature",
-  "description": "A legacy signature over payload_hash alone is not accepted by the v0.3.0 verifier.",
+  "description": "A legacy signature over payload_hash alone is not accepted by the v0.4.0 verifier.",
   "input": {
     "proofmeta": "1.0",
     "payload": {

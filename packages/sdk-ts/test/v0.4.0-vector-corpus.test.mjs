@@ -25,7 +25,7 @@ const reasonByCode = Object.freeze({
     "envelope[0]: status.update must use exactly one mode: request_id only (Mode A) or subject + policy only (Mode B)",
 });
 
-test("ProofMeta v0.3.0 corpus vectors match SDK verification results", async () => {
+test("ProofMeta v0.4.0 corpus vectors match SDK verification results", async () => {
   const vectorFiles = readdirSync(corpusDirectory)
     .filter((name) => name.endsWith(".json") && name !== "keys.json")
     .sort();

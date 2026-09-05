@@ -10,6 +10,6 @@
     "start": "node client.mjs"
   },
   "dependencies": {
-    "@proofmeta/sdk-ts": "^0.3.0"
+    "@proofmeta/sdk-ts": "^0.4.0"
   }
 }
