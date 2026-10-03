@@ -38,6 +38,10 @@ const PUBLIC_ORIGIN = process.env.PUBLIC_ORIGIN ?? `http://${HOST}:${PORT}`;
 
 /** @type {Map<string, import("@proofmeta/sdk-ts").Envelope[]>} */
 const chains = new Map(); // request_id → [OPEN, PENDING, GRANTED, ...]
+// Process-local one-shot reservations are separate from published chains.
+// Keep IDs even on processing failure; retry requires a new ID. Restarting
+// this process clears reservations; this is not multi-instance replay protection.
+const reservedRequestIds = new Set();
 
 // ── Bootstrap: keypair, resolvers, manifest ───────────────────────────────
 
@@ -158,10 +162,11 @@ async function handleRequest(req, res) {
     return json(res, 400, { error: "item does not offer this license_type" });
   }
 
-  // 3. Replay protection: a given request_id is one-shot.
-  if (chains.has(p.request_id)) {
+  // 3. Check and reserve synchronously after validation, before processing awaits.
+  if (reservedRequestIds.has(p.request_id)) {
     return json(res, 409, { error: "request_id already seen" });
   }
+  reservedRequestIds.add(p.request_id);
 
   // 4. Sign PENDING — updateStatus wires in_reply_to + request_id from the prior envelope.
   const pending = await updateStatus(body, "PENDING", keypair.did, keypair.privateKey, {
