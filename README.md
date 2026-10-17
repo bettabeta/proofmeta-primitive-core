@@ -1,4 +1,4 @@
-# ProofMeta Primitive Core
+# ProofMeta
 
 > **Layer:** Primitive
 > **Depends on:** nothing
@@ -9,7 +9,19 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Status: v1 Draft](https://img.shields.io/badge/Status-v1_Draft-yellow)]()
 
+[Website](https://www.proofmeta.com/) · [Manifest Generator](https://www.proofmeta.com/generate) · [Verifier](https://www.proofmeta.com/verify) · [Master Specification](./PROOFMETA_ANWEISUNG.md)
+
 ---
+
+## Try ProofMeta in 60 seconds
+
+No install, account, or email required:
+
+1. [Verify proofmeta.com's own signed manifest](https://www.proofmeta.com/verify?url=/.well-known/proofmeta.json).
+2. Inspect who signed it, which payload hash was signed, and which license scopes it declares.
+3. [Open the Manifest Generator](https://www.proofmeta.com/generate) to create a key and build your own manifest locally in the browser.
+
+The generator keeps the private key in your browser and self-checks the signed result. When you are ready to publish, host the downloaded file at `https://your-domain/.well-known/proofmeta.json`.
 
 ## What is ProofMeta?
 
@@ -46,7 +58,7 @@ A signed status can be linked to a request or issued independently:
 
 Profiles for specific domains live in separate `proofmeta-profile-*` repositories.
 
-## Quick Start
+## Manifest shape
 
 A Provider Agent publishes a manifest at `/.well-known/proofmeta.json`. Every ProofMeta artifact is a **Signed Envelope** — the outer wrapper carries the author DID, the signature, and a hash of the payload. The manifest lives inside `payload`:
 
@@ -92,6 +104,7 @@ Status is expressed through the envelope chain — a Consumer polls `GET {reques
 /packages/resolvers     → Reference resolver implementations
 /examples/provider      → Demo Provider Agent
 /examples/consumer      → Demo Consumer Agent
+/site                   → Browser generator, verifier, and protocol website
 /docs                   → Specification documentation
 package.json            → npm workspaces (packages/*, examples/*)
 .cursorrules            → Cursor IDE rules
